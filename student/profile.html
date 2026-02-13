@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Assignment Evaluator</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <div class="portal-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">📚 AES Student</div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="assignments.html" class="nav-item">
+                    <span class="nav-icon">📝</span>
+                    <span>Assignments</span>
+                </a>
+                <a href="results.html" class="nav-item">
+                    <span class="nav-icon">🎯</span>
+                    <span>Results</span>
+                </a>
+                <a href="profile.html" class="nav-item active">
+                    <span class="nav-icon">👤</span>
+                    <span>Profile</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Navbar -->
+            <nav class="navbar">
+                <h2 class="navbar-title">Profile</h2>
+                <div class="navbar-right">
+                    <div class="user-info">
+                        <div class="user-avatar">JD</div>
+                        <span class="user-name">John Doe</span>
+                    </div>
+                    <a href="../index.html" class="btn btn-sm btn-secondary">Logout</a>
+                </div>
+            </nav>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <div class="page-header">
+                    <h1 class="page-title">Student Profile</h1>
+                    <p class="page-subtitle">View and manage your profile information</p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: var(--spacing-lg);">
+                    <!-- Profile Card -->
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <div class="user-avatar"
+                                style="width: 120px; height: 120px; font-size: 3rem; margin: 0 auto var(--spacing-md);">
+                                JD
+                            </div>
+                            <h3 style="margin-bottom: var(--spacing-xs);">John Doe</h3>
+                            <p style="color: var(--text-medium); margin-bottom: var(--spacing-md);">Computer Science
+                                Student</p>
+                            <span class="badge badge-success">Active</span>
+                        </div>
+                    </div>
+
+                    <!-- Profile Details -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Personal Information</h3>
+                        </div>
+                        <div class="card-body">
+                            <div style="display: grid; gap: var(--spacing-md);">
+                                <div>
+                                    <label
+                                        style="font-weight: 600; color: var(--text-medium); display: block; margin-bottom: var(--spacing-xs);">
+                                        Full Name
+                                    </label>
+                                    <p style="color: var(--text-dark); font-size: 1.125rem;">John Doe</p>
+                                </div>
+
+                                <div>
+                                    <label
+                                        style="font-weight: 600; color: var(--text-medium); display: block; margin-bottom: var(--spacing-xs);">
+                                        Student ID
+                                    </label>
+                                    <p style="color: var(--text-dark); font-size: 1.125rem;">CS2026-1234</p>
+                                </div>
+
+                                <div>
+                                    <label
+                                        style="font-weight: 600; color: var(--text-medium); display: block; margin-bottom: var(--spacing-xs);">
+                                        Email Address
+                                    </label>
+                                    <p style="color: var(--text-dark); font-size: 1.125rem;">john.doe@college.edu</p>
+                                </div>
+
+                                <div>
+                                    <label
+                                        style="font-weight: 600; color: var(--text-medium); display: block; margin-bottom: var(--spacing-xs);">
+                                        Department
+                                    </label>
+                                    <p style="color: var(--text-dark); font-size: 1.125rem;">Computer Science &
+                                        Engineering</p>
+                                </div>
+
+                                <div>
+                                    <label
+                                        style="font-weight: 600; color: var(--text-medium); display: block; margin-bottom: var(--spacing-xs);">
+                                        Year
+                                    </label>
+                                    <p style="color: var(--text-dark); font-size: 1.125rem;">3rd Year</p>
+                                </div>
+
+                                <div>
+                                    <label
+                                        style="font-weight: 600; color: var(--text-medium); display: block; margin-bottom: var(--spacing-xs);">
+                                        Enrollment Date
+                                    </label>
+                                    <p style="color: var(--text-dark); font-size: 1.125rem;">August 2023</p>
+                                </div>
+                            </div>
+
+                            <div class="mt-4"
+                                style="padding-top: var(--spacing-md); border-top: 1px solid var(--bg-grey);">
+                                <a href="../change-password.html" class="btn btn-primary">
+                                    🔒 Change Password
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Academic Performance -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h3 class="card-title">Academic Performance</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-label">Overall GPA</div>
+                                <div class="stat-value">3.8</div>
+                                <div class="stat-change positive">Excellent</div>
+                            </div>
+                            <div class="stat-card success">
+                                <div class="stat-label">Assignments Completed</div>
+                                <div class="stat-value">42</div>
+                                <div class="stat-change">This semester</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">Average Score</div>
+                                <div class="stat-value">85%</div>
+                                <div class="stat-change positive">+3% from last sem</div>
+                            </div>
+                            <div class="stat-card success">
+                                <div class="stat-label">Attendance</div>
+                                <div class="stat-value">94%</div>
+                                <div class="stat-change">Very Good</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

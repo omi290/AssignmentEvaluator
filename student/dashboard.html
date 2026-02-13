@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Assignment Evaluator</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <div class="portal-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">📚 AES Student</div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item active">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="assignments.html" class="nav-item">
+                    <span class="nav-icon">📝</span>
+                    <span>Assignments</span>
+                </a>
+                <a href="results.html" class="nav-item">
+                    <span class="nav-icon">🎯</span>
+                    <span>Results</span>
+                </a>
+                <a href="profile.html" class="nav-item">
+                    <span class="nav-icon">👤</span>
+                    <span>Profile</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Navbar -->
+            <nav class="navbar">
+                <h2 class="navbar-title">Dashboard</h2>
+                <div class="navbar-right">
+                    <div class="user-info">
+                        <div class="user-avatar">JD</div>
+                        <span class="user-name">John Doe</span>
+                    </div>
+                    <a href="../index.html" class="btn btn-sm btn-secondary">Logout</a>
+                </div>
+            </nav>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <div class="page-header">
+                    <h1 class="page-title">Welcome back, John! 👋</h1>
+                    <p class="page-subtitle">Here's your assignment overview</p>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Assignments</div>
+                        <div class="stat-value">24</div>
+                        <div class="stat-change positive">+3 this week</div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="stat-label">Pending</div>
+                        <div class="stat-value">5</div>
+                        <div class="stat-change">Due soon</div>
+                    </div>
+                    <div class="stat-card success">
+                        <div class="stat-label">Submitted</div>
+                        <div class="stat-value">15</div>
+                        <div class="stat-change positive">On time</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Evaluated</div>
+                        <div class="stat-value">12</div>
+                        <div class="stat-change">Avg: 85%</div>
+                    </div>
+                </div>
+
+                <!-- Recent Assignments -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Recent Assignments</h3>
+                    </div>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Assignment</th>
+                                    <th>Subject</th>
+                                    <th>Deadline</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Data Structures - Assignment 3</td>
+                                    <td>Computer Science</td>
+                                    <td>Feb 15, 2026</td>
+                                    <td><span class="badge badge-warning">Pending</span></td>
+                                    <td><a href="submission.html" class="btn btn-sm btn-primary">Submit</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Database Management - Lab 5</td>
+                                    <td>Computer Science</td>
+                                    <td>Feb 18, 2026</td>
+                                    <td><span class="badge badge-warning">Pending</span></td>
+                                    <td><a href="submission.html" class="btn btn-sm btn-primary">Submit</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Web Development - Project 2</td>
+                                    <td>Information Technology</td>
+                                    <td>Feb 12, 2026</td>
+                                    <td><span class="badge badge-success">Submitted</span></td>
+                                    <td><a href="results.html" class="btn btn-sm btn-secondary">View</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Operating Systems - Quiz 4</td>
+                                    <td>Computer Science</td>
+                                    <td>Feb 10, 2026</td>
+                                    <td><span class="badge badge-info">Evaluated</span></td>
+                                    <td><a href="results.html" class="btn btn-sm btn-secondary">Results</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Computer Networks - Assignment 2</td>
+                                    <td>Computer Science</td>
+                                    <td>Feb 08, 2026</td>
+                                    <td><span class="badge badge-info">Evaluated</span></td>
+                                    <td><a href="results.html" class="btn btn-sm btn-secondary">Results</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

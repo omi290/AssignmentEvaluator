@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - Assignment Evaluator</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <div class="portal-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">👩‍🏫 AES Teacher</div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item active">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="create-assignment.html" class="nav-item">
+                    <span class="nav-icon">➕</span>
+                    <span>Create Assignment</span>
+                </a>
+                <a href="submissions.html" class="nav-item">
+                    <span class="nav-icon">📥</span>
+                    <span>Submissions</span>
+                </a>
+                <a href="profile.html" class="nav-item">
+                    <span class="nav-icon">👤</span>
+                    <span>Profile</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Navbar -->
+            <nav class="navbar">
+                <h2 class="navbar-title">Dashboard</h2>
+                <div class="navbar-right">
+                    <div class="user-info">
+                        <div class="user-avatar">SJ</div>
+                        <span class="user-name">Dr. Sarah Johnson</span>
+                    </div>
+                    <a href="../index.html" class="btn btn-sm btn-secondary">Logout</a>
+                </div>
+            </nav>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <div class="page-header">
+                    <h1 class="page-title">Welcome back, Dr. Johnson! 👋</h1>
+                    <p class="page-subtitle">Here's your teaching overview</p>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Assignments</div>
+                        <div class="stat-value">18</div>
+                        <div class="stat-change">Active this semester</div>
+                    </div>
+                    <div class="stat-card success">
+                        <div class="stat-label">Submissions Received</div>
+                        <div class="stat-value">342</div>
+                        <div class="stat-change positive">+28 today</div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="stat-label">Pending Evaluation</div>
+                        <div class="stat-value">47</div>
+                        <div class="stat-change">Needs attention</div>
+                    </div>
+                    <div class="stat-card danger">
+                        <div class="stat-label">AI Flagged</div>
+                        <div class="stat-value">12</div>
+                        <div class="stat-change">Requires review</div>
+                    </div>
+                </div>
+
+                <!-- Recent Submissions -->
+                <div class="card">
+                    <div class="card-header flex-between">
+                        <h3 class="card-title">Recent Submissions</h3>
+                        <a href="submissions.html" class="btn btn-sm btn-primary">View All</a>
+                    </div>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Assignment</th>
+                                    <th>Submitted</th>
+                                    <th>AI Detection</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>John Doe (CS2026-1234)</td>
+                                    <td>Data Structures - Assignment 3</td>
+                                    <td>2 hours ago</td>
+                                    <td><span class="badge badge-success">Clean</span></td>
+                                    <td><span class="badge badge-warning">Pending</span></td>
+                                    <td><a href="evaluate.html" class="btn btn-sm btn-primary">Evaluate</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Jane Smith (CS2026-5678)</td>
+                                    <td>Database Management - Lab 5</td>
+                                    <td>5 hours ago</td>
+                                    <td><span class="badge badge-danger">High Risk</span></td>
+                                    <td><span class="badge badge-warning">Pending</span></td>
+                                    <td><a href="evaluate.html" class="btn btn-sm btn-primary">Evaluate</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Mike Johnson (CS2026-9012)</td>
+                                    <td>Algorithm Analysis - Problem Set 4</td>
+                                    <td>1 day ago</td>
+                                    <td><span class="badge badge-warning">Low Risk</span></td>
+                                    <td><span class="badge badge-warning">Pending</span></td>
+                                    <td><a href="evaluate.html" class="btn btn-sm btn-primary">Evaluate</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Emily Davis (CS2026-3456)</td>
+                                    <td>Web Development - Project 2</td>
+                                    <td>1 day ago</td>
+                                    <td><span class="badge badge-success">Clean</span></td>
+                                    <td><span class="badge badge-info">Evaluated</span></td>
+                                    <td><button class="btn btn-sm btn-secondary">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Robert Brown (CS2026-7890)</td>
+                                    <td>Operating Systems - Quiz 4</td>
+                                    <td>2 days ago</td>
+                                    <td><span class="badge badge-success">Clean</span></td>
+                                    <td><span class="badge badge-info">Evaluated</span></td>
+                                    <td><button class="btn btn-sm btn-secondary">View</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h3 class="card-title">Quick Actions</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="flex gap-2">
+                            <a href="create-assignment.html" class="btn btn-primary">
+                                ➕ Create New Assignment
+                            </a>
+                            <a href="submissions.html" class="btn btn-secondary">
+                                📥 View All Submissions
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

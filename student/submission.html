@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Assignment - Assignment Evaluator</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <div class="portal-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">📚 AES Student</div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="assignments.html" class="nav-item active">
+                    <span class="nav-icon">📝</span>
+                    <span>Assignments</span>
+                </a>
+                <a href="results.html" class="nav-item">
+                    <span class="nav-icon">🎯</span>
+                    <span>Results</span>
+                </a>
+                <a href="profile.html" class="nav-item">
+                    <span class="nav-icon">👤</span>
+                    <span>Profile</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Navbar -->
+            <nav class="navbar">
+                <h2 class="navbar-title">Submit Assignment</h2>
+                <div class="navbar-right">
+                    <div class="user-info">
+                        <div class="user-avatar">JD</div>
+                        <span class="user-name">John Doe</span>
+                    </div>
+                    <a href="../index.html" class="btn btn-sm btn-secondary">Logout</a>
+                </div>
+            </nav>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <div class="page-header">
+                    <h1 class="page-title">Data Structures - Assignment 3</h1>
+                    <p class="page-subtitle">Submit your assignment before the deadline</p>
+                </div>
+
+                <!-- Deadline Alert -->
+                <div class="alert alert-warning">
+                    <span>⏰</span>
+                    <div>
+                        <strong>Deadline:</strong> February 15, 2026 at 11:59 PM
+                        <br>
+                        <small>You have 2 days remaining</small>
+                    </div>
+                </div>
+
+                <!-- Assignment Details -->
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h3 class="card-title">Assignment Details</h3>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Subject:</strong> Computer Science</p>
+                        <p><strong>Topic:</strong> Binary Search Trees and AVL Trees</p>
+                        <p><strong>Assigned by:</strong> Dr. Sarah Johnson</p>
+                        <p><strong>Assigned Date:</strong> February 08, 2026</p>
+                        <p class="mt-2">
+                            <strong>Description:</strong><br>
+                            Implement a self-balancing AVL tree with insertion, deletion, and rotation operations.
+                            Include proper documentation and test cases. Submit your code along with a report
+                            explaining the time complexity of each operation.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Submission Form -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Submit Your Work</h3>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <div class="form-group">
+                                <label class="form-label">Comments (Optional)</label>
+                                <textarea class="form-textarea"
+                                    placeholder="Add any comments or notes about your submission..."
+                                    rows="4"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Upload Files</label>
+                                <div class="form-file">
+                                    <div class="form-file-label">
+                                        📎 Click to browse or drag and drop your files here
+                                        <br>
+                                        <small style="color: var(--text-light);">
+                                            Supported formats: PDF, DOC, DOCX, ZIP, RAR (Max 10MB)
+                                        </small>
+                                    </div>
+                                    <input type="file" style="display: none;" multiple>
+                                </div>
+                            </div>
+
+                            <div class="alert alert-info">
+                                <span>ℹ️</span>
+                                <div>
+                                    <strong>Note:</strong> Your submission will be automatically checked for
+                                    AI-generated content
+                                    and plagiarism. Make sure all work is original.
+                                </div>
+                            </div>
+
+                            <div class="flex gap-2 mt-3">
+                                <button type="submit" class="btn btn-success">
+                                    ✓ Submit Assignment
+                                </button>
+                                <a href="assignments.html" class="btn btn-secondary">
+                                    Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

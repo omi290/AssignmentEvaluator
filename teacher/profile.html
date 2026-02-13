@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Profile - Assignment Evaluator</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <div class="portal-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">👩‍🏫 AES Teacher</div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="create-assignment.html" class="nav-item">
+                    <span class="nav-icon">➕</span>
+                    <span>Create Assignment</span>
+                </a>
+                <a href="submissions.html" class="nav-item">
+                    <span class="nav-icon">📥</span>
+                    <span>Submissions</span>
+                </a>
+                <a href="profile.html" class="nav-item active">
+                    <span class="nav-icon">👤</span>
+                    <span>Profile</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Navbar -->
+            <nav class="navbar">
+                <h2 class="navbar-title">Profile</h2>
+                <div class="navbar-right">
+                    <div class="user-info">
+                        <div class="user-avatar">SJ</div>
+                        <span class="user-name">Dr. Sarah Johnson</span>
+                    </div>
+                    <a href="../index.html" class="btn btn-sm btn-secondary">Logout</a>
+                </div>
+            </nav>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <div class="page-header">
+                    <h1 class="page-title">Teacher Profile</h1>
+                    <p class="page-subtitle">View and manage your profile information</p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: var(--spacing-lg);">
+                    <!-- Profile Card -->
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <div class="user-avatar"
+                                style="width: 120px; height: 120px; font-size: 3rem; margin: 0 auto var(--spacing-md);">
+                                SJ
+                            </div>
+                            <h3 style="margin-bottom: var(--spacing-xs);">Dr. Sarah Johnson</h3>
+                            <p style="color: var(--text-medium); margin-bottom: var(--spacing-md);">Professor, Computer
+                                Science</p>
+                            <span class="badge badge-success">Active</span>
+                        </div>
+                    </div>
+
+                    <!-- Profile Details -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Personal Information</h3>
+                        </div>
+                        <div class="card-body">
+                            <div style="display: grid; gap: var(--spacing-md);">
+                                <div>
+                                    <label
+                                        style="font-weight: 600; color: var(--text-medium); display: block; margin-bottom: var(--spacing-xs);">
+                                        Full Name
+                                    </label>
+                                    <p style="color: var(--text-dark); font-size: 1.125rem;">Dr. Sarah Johnson</p>
+                                </div>
+
+                                <div>
+                                    <label
+                                        style="font-weight: 600; color: var(--text-medium); display: block; margin-bottom: var(--spacing-xs);">
+                                        Employee ID
+                                    </label>
+                                    <p style="color: var(--text-dark); font-size: 1.125rem;">FAC-CS-2018-042</p>
+                                </div>
+
+                                <div>
+                                    <label
+                                        style="font-weight: 600; color: var(--text-medium); display: block; margin-bottom: var(--spacing-xs);">
+                                        Email Address
+                                    </label>
+                                    <p style="color: var(--text-dark); font-size: 1.125rem;">sarah.johnson@college.edu
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <label
+                                        style="font-weight: 600; color: var(--text-medium); display: block; margin-bottom: var(--spacing-xs);">
+                                        Department
+                                    </label>
+                                    <p style="color: var(--text-dark); font-size: 1.125rem;">Computer Science &
+                                        Engineering</p>
+                                </div>
+
+                                <div>
+                                    <label
+                                        style="font-weight: 600; color: var(--text-medium); display: block; margin-bottom: var(--spacing-xs);">
+                                        Designation
+                                    </label>
+                                    <p style="color: var(--text-dark); font-size: 1.125rem;">Associate Professor</p>
+                                </div>
+
+                                <div>
+                                    <label
+                                        style="font-weight: 600; color: var(--text-medium); display: block; margin-bottom: var(--spacing-xs);">
+                                        Joined Date
+                                    </label>
+                                    <p style="color: var(--text-dark); font-size: 1.125rem;">August 2018</p>
+                                </div>
+                            </div>
+
+                            <div class="mt-4"
+                                style="padding-top: var(--spacing-md); border-top: 1px solid var(--bg-grey);">
+                                <a href="../change-password.html" class="btn btn-primary">
+                                    🔒 Change Password
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Teaching Statistics -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h3 class="card-title">Teaching Statistics</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-label">Total Students</div>
+                                <div class="stat-value">156</div>
+                                <div class="stat-change">This semester</div>
+                            </div>
+                            <div class="stat-card success">
+                                <div class="stat-label">Assignments Created</div>
+                                <div class="stat-value">18</div>
+                                <div class="stat-change">Active</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">Evaluations Done</div>
+                                <div class="stat-value">342</div>
+                                <div class="stat-change">This semester</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">Average Response Time</div>
+                                <div class="stat-value">2.3</div>
+                                <div class="stat-change">Days</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

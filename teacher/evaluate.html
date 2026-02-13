@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluate Assignment - Assignment Evaluator</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <div class="portal-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">👩‍🏫 AES Teacher</div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="create-assignment.html" class="nav-item">
+                    <span class="nav-icon">➕</span>
+                    <span>Create Assignment</span>
+                </a>
+                <a href="submissions.html" class="nav-item active">
+                    <span class="nav-icon">📥</span>
+                    <span>Submissions</span>
+                </a>
+                <a href="profile.html" class="nav-item">
+                    <span class="nav-icon">👤</span>
+                    <span>Profile</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Navbar -->
+            <nav class="navbar">
+                <h2 class="navbar-title">Evaluate Submission</h2>
+                <div class="navbar-right">
+                    <div class="user-info">
+                        <div class="user-avatar">SJ</div>
+                        <span class="user-name">Dr. Sarah Johnson</span>
+                    </div>
+                    <a href="../index.html" class="btn btn-sm btn-secondary">Logout</a>
+                </div>
+            </nav>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <div class="page-header">
+                    <h1 class="page-title">Evaluate: Data Structures - Assignment 3</h1>
+                    <p class="page-subtitle">Student: John Doe (CS2026-1234)</p>
+                </div>
+
+                <!-- Submission Info -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div
+                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-md);">
+                            <div>
+                                <strong style="color: var(--text-medium);">Submitted:</strong>
+                                <p>Feb 13, 2026 at 08:30 AM</p>
+                            </div>
+                            <div>
+                                <strong style="color: var(--text-medium);">Deadline:</strong>
+                                <p>Feb 15, 2026 at 11:59 PM</p>
+                            </div>
+                            <div>
+                                <strong style="color: var(--text-medium);">Status:</strong>
+                                <p><span class="badge badge-success">On Time</span></p>
+                            </div>
+                            <div>
+                                <strong style="color: var(--text-medium);">Files Submitted:</strong>
+                                <p><a href="#" style="color: var(--primary-blue);">📎 assignment3.zip</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Evaluation Grid -->
+                <div class="evaluation-grid">
+                    <!-- Left Column - Student Answer -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Student's Submission</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="answer-box">
+                                # AVL Tree Implementation
+
+                                ## Introduction
+                                This implementation demonstrates a self-balancing AVL tree with
+                                complete insertion, deletion, and rotation operations.
+
+                                ## Key Features:
+                                - Automatic balancing after insertions
+                                - Height-based balance factor calculation
+                                - Left and right rotation support
+                                - Efficient search operations
+
+                                ## Time Complexity Analysis:
+                                - Insertion: O(log n)
+                                - Deletion: O(log n)
+                                - Search: O(log n)
+                                - Rotation: O(1)
+
+                                ## Code Structure:
+                                The implementation includes:
+                                1. Node class with height tracking
+                                2. AVL Tree class with balance operations
+                                3. Comprehensive test suite
+                                4. Performance benchmarks
+
+                                All operations maintain the AVL tree property where the
+                                balance factor of every node is -1, 0, or 1.
+                            </div>
+                            <div class="mt-2">
+                                <p><strong>Student Comments:</strong></p>
+                                <p style="color: var(--text-medium); font-style: italic;">
+                                    "I've implemented all required operations with proper documentation.
+                                    The test cases cover edge cases including empty trees and single-node scenarios."
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column - Evaluation Form -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Evaluation</h3>
+                        </div>
+                        <div class="card-body">
+                            <!-- AI Detection -->
+                            <div class="alert alert-success mb-3">
+                                <span>🤖</span>
+                                <div>
+                                    <strong>AI Detection Result:</strong> Clean (2% probability)
+                                    <br>
+                                    <small>This submission appears to be original work</small>
+                                </div>
+                            </div>
+
+                            <!-- Marks -->
+                            <div class="form-group">
+                                <label class="form-label">Marks Obtained (out of 100)</label>
+                                <input type="number" class="form-input" placeholder="Enter marks" min="0" max="100">
+                            </div>
+
+                            <!-- Auto-suggested Marks -->
+                            <div class="card mb-3" style="background: var(--bg-lighter); box-shadow: none;">
+                                <div class="card-body">
+                                    <p style="margin-bottom: var(--spacing-xs);"><strong>AI Suggested Marks:</strong>
+                                    </p>
+                                    <div style="font-size: 1.5rem; color: var(--primary-blue); font-weight: 700;">
+                                        92/100
+                                    </div>
+                                    <small style="color: var(--text-medium);">
+                                        Based on: Code quality, documentation, test coverage, and complexity analysis
+                                    </small>
+                                </div>
+                            </div>
+
+                            <!-- Feedback -->
+                            <div class="form-group">
+                                <label class="form-label">Feedback for Student</label>
+                                <textarea class="form-textarea" placeholder="Provide detailed feedback..."
+                                    rows="8"></textarea>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="flex gap-2">
+                                <button type="submit" class="btn btn-success">
+                                    ✓ Submit Evaluation
+                                </button>
+                                <a href="submissions.html" class="btn btn-secondary">
+                                    Cancel
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

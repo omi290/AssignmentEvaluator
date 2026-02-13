@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results - Assignment Evaluator</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <div class="portal-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">📚 AES Student</div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="assignments.html" class="nav-item">
+                    <span class="nav-icon">📝</span>
+                    <span>Assignments</span>
+                </a>
+                <a href="results.html" class="nav-item active">
+                    <span class="nav-icon">🎯</span>
+                    <span>Results</span>
+                </a>
+                <a href="profile.html" class="nav-item">
+                    <span class="nav-icon">👤</span>
+                    <span>Profile</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Navbar -->
+            <nav class="navbar">
+                <h2 class="navbar-title">Results</h2>
+                <div class="navbar-right">
+                    <div class="user-info">
+                        <div class="user-avatar">JD</div>
+                        <span class="user-name">John Doe</span>
+                    </div>
+                    <a href="../index.html" class="btn btn-sm btn-secondary">Logout</a>
+                </div>
+            </nav>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <div class="page-header">
+                    <h1 class="page-title">Assignment Results</h1>
+                    <p class="page-subtitle">View your grades and feedback</p>
+                </div>
+
+                <!-- Results Table -->
+                <div class="table-container mb-4">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Assignment</th>
+                                <th>Subject</th>
+                                <th>Submitted Date</th>
+                                <th>Marks</th>
+                                <th>AI Detection</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Operating Systems - Quiz 4</td>
+                                <td>Computer Science</td>
+                                <td>Feb 09, 2026</td>
+                                <td><strong style="color: var(--success);">92/100</strong></td>
+                                <td><span class="badge badge-success">Clean</span></td>
+                                <td><button class="btn btn-sm btn-primary">View Details</button></td>
+                            </tr>
+                            <tr>
+                                <td>Computer Networks - Assignment 2</td>
+                                <td>Computer Science</td>
+                                <td>Feb 07, 2026</td>
+                                <td><strong style="color: var(--success);">88/100</strong></td>
+                                <td><span class="badge badge-success">Clean</span></td>
+                                <td><button class="btn btn-sm btn-primary">View Details</button></td>
+                            </tr>
+                            <tr>
+                                <td>Cyber Security - Research Paper</td>
+                                <td>Information Security</td>
+                                <td>Feb 04, 2026</td>
+                                <td><strong style="color: var(--success);">85/100</strong></td>
+                                <td><span class="badge badge-warning">Low Risk</span></td>
+                                <td><button class="btn btn-sm btn-primary">View Details</button></td>
+                            </tr>
+                            <tr>
+                                <td>Database Management - Lab 4</td>
+                                <td>Computer Science</td>
+                                <td>Feb 01, 2026</td>
+                                <td><strong style="color: var(--warning);">78/100</strong></td>
+                                <td><span class="badge badge-success">Clean</span></td>
+                                <td><button class="btn btn-sm btn-primary">View Details</button></td>
+                            </tr>
+                            <tr>
+                                <td>Web Development - Project 1</td>
+                                <td>Information Technology</td>
+                                <td>Jan 28, 2026</td>
+                                <td><strong style="color: var(--success);">95/100</strong></td>
+                                <td><span class="badge badge-success">Clean</span></td>
+                                <td><button class="btn btn-sm btn-primary">View Details</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Detailed Result Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Operating Systems - Quiz 4</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="stats-grid mb-3">
+                            <div class="stat-card success">
+                                <div class="stat-label">Score</div>
+                                <div class="stat-value">92/100</div>
+                                <div class="stat-change">Grade: A</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">Submitted</div>
+                                <div class="stat-value">Feb 09</div>
+                                <div class="stat-change">On Time</div>
+                            </div>
+                            <div class="stat-card success">
+                                <div class="stat-label">AI Detection</div>
+                                <div class="stat-value">0%</div>
+                                <div class="stat-change">Clean</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">Evaluated By</div>
+                                <div class="stat-value" style="font-size: 1.25rem;">Dr. Smith</div>
+                                <div class="stat-change">Feb 10, 2026</div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-success mb-3">
+                            <span>✓</span>
+                            <div>
+                                <strong>Excellent Work!</strong> Your submission demonstrates strong understanding
+                                of operating system concepts.
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 style="margin-bottom: var(--spacing-sm); color: var(--text-dark);">Teacher's Feedback
+                            </h4>
+                            <div class="answer-box">
+                                Your answers show excellent understanding of process scheduling algorithms.
+                                The explanation of Round Robin vs Priority Scheduling was particularly well done.
+
+                                Strengths:
+                                - Clear and concise explanations
+                                - Good use of diagrams
+                                - Proper citation of sources
+
+                                Areas for improvement:
+                                - Could have elaborated more on deadlock prevention
+                                - Minor formatting issues in question 3
+
+                                Overall, great job! Keep up the good work.
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <a href="assignments.html" class="btn btn-secondary">Back to Assignments</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

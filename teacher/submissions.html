@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submissions - Assignment Evaluator</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <div class="portal-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">👩‍🏫 AES Teacher</div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="create-assignment.html" class="nav-item">
+                    <span class="nav-icon">➕</span>
+                    <span>Create Assignment</span>
+                </a>
+                <a href="submissions.html" class="nav-item active">
+                    <span class="nav-icon">📥</span>
+                    <span>Submissions</span>
+                </a>
+                <a href="profile.html" class="nav-item">
+                    <span class="nav-icon">👤</span>
+                    <span>Profile</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Navbar -->
+            <nav class="navbar">
+                <h2 class="navbar-title">Submissions</h2>
+                <div class="navbar-right">
+                    <div class="user-info">
+                        <div class="user-avatar">SJ</div>
+                        <span class="user-name">Dr. Sarah Johnson</span>
+                    </div>
+                    <a href="../index.html" class="btn btn-sm btn-secondary">Logout</a>
+                </div>
+            </nav>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <div class="page-header">
+                    <h1 class="page-title">Student Submissions</h1>
+                    <p class="page-subtitle">Review and evaluate student submissions</p>
+                </div>
+
+                <!-- Filter Section -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div
+                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-md);">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label">Filter by Assignment</label>
+                                <select class="form-select">
+                                    <option value="">All Assignments</option>
+                                    <option value="1">Data Structures - Assignment 3</option>
+                                    <option value="2">Database Management - Lab 5</option>
+                                    <option value="3">Algorithm Analysis - Problem Set 4</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label">Filter by Status</label>
+                                <select class="form-select">
+                                    <option value="">All Status</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="evaluated">Evaluated</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label">Filter by AI Detection</label>
+                                <select class="form-select">
+                                    <option value="">All</option>
+                                    <option value="clean">Clean</option>
+                                    <option value="low">Low Risk</option>
+                                    <option value="high">High Risk</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submissions Table -->
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Student Name</th>
+                                <th>Assignment</th>
+                                <th>Submission Time</th>
+                                <th>AI Detection</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>CS2026-1234</td>
+                                <td>John Doe</td>
+                                <td>Data Structures - Assignment 3</td>
+                                <td>Feb 13, 2026 08:30 AM</td>
+                                <td><span class="badge badge-success">Clean (2%)</span></td>
+                                <td><span class="badge badge-warning">Pending</span></td>
+                                <td><a href="evaluate.html" class="btn btn-sm btn-primary">Evaluate</a></td>
+                            </tr>
+                            <tr>
+                                <td>CS2026-5678</td>
+                                <td>Jane Smith</td>
+                                <td>Database Management - Lab 5</td>
+                                <td>Feb 13, 2026 05:15 AM</td>
+                                <td><span class="badge badge-danger">High Risk (87%)</span></td>
+                                <td><span class="badge badge-warning">Pending</span></td>
+                                <td><a href="evaluate.html" class="btn btn-sm btn-primary">Evaluate</a></td>
+                            </tr>
+                            <tr>
+                                <td>CS2026-9012</td>
+                                <td>Mike Johnson</td>
+                                <td>Algorithm Analysis - Problem Set 4</td>
+                                <td>Feb 12, 2026 11:45 PM</td>
+                                <td><span class="badge badge-warning">Low Risk (23%)</span></td>
+                                <td><span class="badge badge-warning">Pending</span></td>
+                                <td><a href="evaluate.html" class="btn btn-sm btn-primary">Evaluate</a></td>
+                            </tr>
+                            <tr>
+                                <td>CS2026-3456</td>
+                                <td>Emily Davis</td>
+                                <td>Web Development - Project 2</td>
+                                <td>Feb 12, 2026 09:20 PM</td>
+                                <td><span class="badge badge-success">Clean (5%)</span></td>
+                                <td><span class="badge badge-info">Evaluated (92/100)</span></td>
+                                <td><button class="btn btn-sm btn-secondary">View</button></td>
+                            </tr>
+                            <tr>
+                                <td>CS2026-7890</td>
+                                <td>Robert Brown</td>
+                                <td>Operating Systems - Quiz 4</td>
+                                <td>Feb 11, 2026 06:30 PM</td>
+                                <td><span class="badge badge-success">Clean (1%)</span></td>
+                                <td><span class="badge badge-info">Evaluated (88/100)</span></td>
+                                <td><button class="btn btn-sm btn-secondary">View</button></td>
+                            </tr>
+                            <tr>
+                                <td>CS2026-2345</td>
+                                <td>Lisa Anderson</td>
+                                <td>Computer Networks - Assignment 2</td>
+                                <td>Feb 11, 2026 03:15 PM</td>
+                                <td><span class="badge badge-warning">Low Risk (18%)</span></td>
+                                <td><span class="badge badge-info">Evaluated (85/100)</span></td>
+                                <td><button class="btn btn-sm btn-secondary">View</button></td>
+                            </tr>
+                            <tr>
+                                <td>CS2026-6789</td>
+                                <td>David Wilson</td>
+                                <td>Cyber Security - Research Paper</td>
+                                <td>Feb 10, 2026 10:00 AM</td>
+                                <td><span class="badge badge-success">Clean (3%)</span></td>
+                                <td><span class="badge badge-info">Evaluated (95/100)</span></td>
+                                <td><button class="btn btn-sm btn-secondary">View</button></td>
+                            </tr>
+                            <tr>
+                                <td>CS2026-8901</td>
+                                <td>Sarah Martinez</td>
+                                <td>Machine Learning - Project Proposal</td>
+                                <td>Feb 10, 2026 07:45 AM</td>
+                                <td><span class="badge badge-danger">High Risk (92%)</span></td>
+                                <td><span class="badge badge-info">Evaluated (45/100)</span></td>
+                                <td><button class="btn btn-sm btn-secondary">View</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
