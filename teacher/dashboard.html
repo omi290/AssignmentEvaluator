@@ -42,9 +42,9 @@
                 <h2 class="navbar-title">Dashboard</h2>
                 <div class="navbar-right">
                     <div class="user-info">
-                        <img src="../assets/Omie.png" alt="Omie" class="user-avatar"
-                            style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
-                        <span class="user-name">Omie</span>
+                        <span class="user-avatar" id="navAvatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary-blue); color: white; display: inline-flex; align-items: center; justify-content: center; font-weight: 600;">--</span>
+                        <span class="user-name" id="navUserName">Loading...</span>
+                        <span class="user-id" id="navTeacherId" style="font-size: 0.85rem; color: var(--text-medium); margin-left: 4px;"></span>
                     </div>
                     <a href="../index.html" class="btn btn-sm btn-secondary">Logout</a>
                 </div>
@@ -53,36 +53,43 @@
             <!-- Content Area -->
             <div class="content-area">
                 <div class="page-header">
-                    <h1 class="page-title">Welcome back, Omie! 👋</h1>
+                    <h1 class="page-title" id="welcomeTitle">Welcome back! 👋</h1>
                     <p class="page-subtitle">Here's your teaching overview</p>
                 </div>
 
-                <!-- Stats Grid -->
-                <div class="stats-grid">
+                <div id="dashboardLoading" class="card">
+                    <div class="card-body text-center" style="padding: 2rem;">
+                        <p>Loading dashboard...</p>
+                    </div>
+                </div>
+                <div id="dashboardError" style="display: none;" class="alert alert-danger"></div>
+
+                <!-- Stats Grid: always visible, show 0 when empty or on error -->
+                <div id="statsGrid" class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-label">Total Assignments</div>
-                        <div class="stat-value">18</div>
+                        <div class="stat-value" id="statTotal">0</div>
                         <div class="stat-change">Active this semester</div>
                     </div>
                     <div class="stat-card success">
                         <div class="stat-label">Submissions Received</div>
-                        <div class="stat-value">342</div>
-                        <div class="stat-change positive">+28 today</div>
+                        <div class="stat-value" id="statSubmissions">0</div>
+                        <div class="stat-change">All time</div>
                     </div>
                     <div class="stat-card warning">
                         <div class="stat-label">Pending Evaluation</div>
-                        <div class="stat-value">47</div>
+                        <div class="stat-value" id="statPending">0</div>
                         <div class="stat-change">Needs attention</div>
                     </div>
-                    <div class="stat-card danger">
-                        <div class="stat-label">AI Flagged</div>
-                        <div class="stat-value">12</div>
-                        <div class="stat-change">Requires review</div>
+                    <div class="stat-card">
+                        <div class="stat-label">Evaluated</div>
+                        <div class="stat-value" id="statEvaluated">0</div>
+                        <div class="stat-change">Graded</div>
                     </div>
                 </div>
 
-                <!-- Recent Submissions -->
-                <div class="card">
+                <!-- Recent Submissions: always visible -->
+                <div id="submissionsCard" class="card">
                     <div class="card-header flex-between">
                         <h3 class="card-title">Recent Submissions</h3>
                         <a href="submissions.html" class="btn btn-sm btn-primary">View All</a>
@@ -94,52 +101,11 @@
                                     <th>Student</th>
                                     <th>Assignment</th>
                                     <th>Submitted</th>
-                                    <th>AI Detection</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Arzoooo (23011900)</td>
-                                    <td>Data Structures - Assignment 3</td>
-                                    <td>2 hours ago</td>
-                                    <td><span class="badge badge-success">Clean</span></td>
-                                    <td><span class="badge badge-warning">Pending</span></td>
-                                    <td><a href="evaluate.html" class="btn btn-sm btn-primary">Evaluate</a></td>
-                                </tr>
-                                <tr>
-                                    <td>om (23011901)</td>
-                                    <td>Database Management - Lab 5</td>
-                                    <td>5 hours ago</td>
-                                    <td><span class="badge badge-danger">High Risk</span></td>
-                                    <td><span class="badge badge-warning">Pending</span></td>
-                                    <td><a href="evaluate.html" class="btn btn-sm btn-primary">Evaluate</a></td>
-                                </tr>
-                                <tr>
-                                    <td>Tanisha (23011902)</td>
-                                    <td>Algorithm Analysis - Problem Set 4</td>
-                                    <td>1 day ago</td>
-                                    <td><span class="badge badge-warning">Low Risk</span></td>
-                                    <td><span class="badge badge-warning">Pending</span></td>
-                                    <td><a href="evaluate.html" class="btn btn-sm btn-primary">Evaluate</a></td>
-                                </tr>
-                                <tr>
-                                    <td>Priyanka (23011903)</td>
-                                    <td>Web Development - Project 2</td>
-                                    <td>1 day ago</td>
-                                    <td><span class="badge badge-success">Clean</span></td>
-                                    <td><span class="badge badge-info">Evaluated</span></td>
-                                    <td><button class="btn btn-sm btn-secondary">View</button></td>
-                                </tr>
-                                <tr>
-                                    <td>Vaibhav (23011904)</td>
-                                    <td>Operating Systems - Quiz 4</td>
-                                    <td>2 days ago</td>
-                                    <td><span class="badge badge-success">Clean</span></td>
-                                    <td><span class="badge badge-info">Evaluated</span></td>
-                                    <td><button class="btn btn-sm btn-secondary">View</button></td>
-                                </tr>
+                            <tbody id="submissionsTableBody">
                             </tbody>
                         </table>
                     </div>
@@ -164,6 +130,118 @@
             </div>
         </div>
     </div>
+
+    <script>
+        const API_URL = "http://localhost:5000";
+        const teacherId = sessionStorage.getItem("userId");
+        const storedName = sessionStorage.getItem("userName");
+
+        function setNavUser(name, id) {
+            const n = name || storedName || id || "Teacher";
+            document.getElementById("navUserName").textContent = n;
+            document.getElementById("navTeacherId").textContent = id ? `(${id})` : "";
+            const avatar = document.getElementById("navAvatar");
+            avatar.textContent = n.charAt(0).toUpperCase() + (n.split(" ")[1]?.charAt(0) || "").toUpperCase() || "?";
+            if (avatar.textContent.length === 1) avatar.textContent = n.charAt(0).toUpperCase();
+        }
+
+        function setWelcome(name) {
+            document.getElementById("welcomeTitle").textContent = "Welcome back, " + (name || "Teacher") + "! 👋";
+        }
+
+        function timeAgo(str) {
+            if (!str) return "—";
+            try {
+                const d = new Date(str);
+                const sec = Math.floor((Date.now() - d.getTime()) / 1000);
+                if (sec < 60) return "Just now";
+                if (sec < 3600) return Math.floor(sec / 60) + " min ago";
+                if (sec < 86400) return Math.floor(sec / 3600) + " hours ago";
+                if (sec < 604800) return Math.floor(sec / 86400) + " days ago";
+                return d.toLocaleDateString();
+            } catch (_) { return str; }
+        }
+
+        function statusBadge(status) {
+            if (!status) return '<span class="badge badge-warning">Pending</span>';
+            if (status.toString().toLowerCase().includes("evaluated")) return '<span class="badge badge-info">Evaluated</span>';
+            return '<span class="badge badge-warning">Pending</span>';
+        }
+
+        async function loadDashboard() {
+            const loadingEl = document.getElementById("dashboardLoading");
+            const errorEl = document.getElementById("dashboardError");
+            const statsEl = document.getElementById("statsGrid");
+            const cardEl = document.getElementById("submissionsCard");
+
+            if (!teacherId) {
+                errorEl.style.display = "block";
+                errorEl.textContent = "Not logged in. Redirecting to login...";
+                loadingEl.style.display = "none";
+                showZerosAndEmptyTable();
+                setTimeout(() => { window.location.href = "../login.html"; }, 1500);
+                return;
+            }
+
+            setNavUser(storedName, teacherId);
+            setWelcome(storedName);
+
+            function showZerosAndEmptyTable() {
+                document.getElementById("statTotal").textContent = 0;
+                document.getElementById("statSubmissions").textContent = 0;
+                document.getElementById("statPending").textContent = 0;
+                document.getElementById("statEvaluated").textContent = 0;
+                var tbody = document.getElementById("submissionsTableBody");
+                tbody.innerHTML = "<tr><td colspan=\"5\" class=\"text-center\">No submissions yet.</td></tr>";
+            }
+
+            try {
+                const [infoRes, dashRes] = await Promise.all([
+                    fetch(`${API_URL}/teacher/${encodeURIComponent(teacherId)}/info`),
+                    fetch(`${API_URL}/teacher/${encodeURIComponent(teacherId)}/dashboard`),
+                ]);
+
+                const info = await infoRes.json();
+                const dash = await dashRes.json();
+
+                if (info.success && info.name) {
+                    setNavUser(info.name, info.teacher_id);
+                    setWelcome(info.name);
+                }
+
+                document.getElementById("statTotal").textContent = (dash.success && dash.total_assignments != null) ? dash.total_assignments : 0;
+                document.getElementById("statSubmissions").textContent = (dash.success && dash.submissions_received != null) ? dash.submissions_received : 0;
+                document.getElementById("statPending").textContent = (dash.success && dash.pending_evaluation != null) ? dash.pending_evaluation : 0;
+                document.getElementById("statEvaluated").textContent = (dash.success && dash.evaluated_count != null) ? dash.evaluated_count : 0;
+
+                const tbody = document.getElementById("submissionsTableBody");
+                tbody.innerHTML = "";
+                const list = (dash.success && dash.recent_submissions) ? dash.recent_submissions : [];
+                list.forEach(function (s) {
+                    const isEval = s.status && s.status.toString().toLowerCase().includes("evaluated");
+                    const action = isEval
+                        ? '<button class="btn btn-sm btn-secondary">View</button>'
+                        : '<a href="evaluate.html?submission_id=' + (s.submission_id || "") + '&assignment_id=' + (s.assignment_id || "") + '" class="btn btn-sm btn-primary">Evaluate</a>';
+                    const row = "<tr><td>" + (s.student_name || s.student_id) + " (" + (s.student_id || "") + ")</td><td>" + (s.assignment_title || "—") + "</td><td>" + timeAgo(s.submitted_at) + "</td><td>" + statusBadge(s.status) + "</td><td>" + action + "</td></tr>";
+                    tbody.insertAdjacentHTML("beforeend", row);
+                });
+                if (list.length === 0) tbody.innerHTML = "<tr><td colspan=\"5\" class=\"text-center\">No submissions yet.</td></tr>";
+
+                if (!dashRes.ok || !dash.success) {
+                    errorEl.style.display = "block";
+                    errorEl.textContent = dash.message || "Failed to load dashboard.";
+                }
+                loadingEl.style.display = "none";
+            } catch (err) {
+                showZerosAndEmptyTable();
+                errorEl.style.display = "block";
+                errorEl.textContent = "Cannot connect to server. Make sure the backend is running on port 5000.";
+                loadingEl.style.display = "none";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", loadDashboard);
+    </script>
 </body>
 
 </html>

@@ -42,8 +42,9 @@
                 <h2 class="navbar-title">Dashboard</h2>
                 <div class="navbar-right">
                     <div class="user-info">
-                        <div class="user-avatar">AR</div>
-                        <span class="user-name">Arzoooo</span>
+                        <span class="user-avatar" id="navAvatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary-blue); color: white; display: inline-flex; align-items: center; justify-content: center; font-weight: 600;">--</span>
+                        <span class="user-name" id="navUserName">Loading...</span>
+                        <span class="user-id" id="navStudentId" style="font-size: 0.85rem; color: var(--text-medium); margin-left: 4px;"></span>
                     </div>
                     <a href="../index.html" class="btn btn-sm btn-secondary">Logout</a>
                 </div>
@@ -52,36 +53,44 @@
             <!-- Content Area -->
             <div class="content-area">
                 <div class="page-header">
-                    <h1 class="page-title">Welcome back, Arzoooo! 👋</h1>
+                    <h1 class="page-title" id="welcomeTitle">Welcome back! 👋</h1>
                     <p class="page-subtitle">Here's your assignment overview</p>
                 </div>
 
-                <!-- Stats Grid -->
-                <div class="stats-grid">
+                <!-- Loading state -->
+                <div id="dashboardLoading" class="card">
+                    <div class="card-body text-center" style="padding: 2rem;">
+                        <p>Loading dashboard...</p>
+                    </div>
+                </div>
+                <div id="dashboardError" style="display: none;" class="alert alert-danger"></div>
+
+                <!-- Stats Grid: always visible, show 0 when empty or on error -->
+                <div id="statsGrid" class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-label">Total Assignments</div>
-                        <div class="stat-value">24</div>
-                        <div class="stat-change positive">+3 this week</div>
+                        <div class="stat-value" id="statTotal">0</div>
+                        <div class="stat-change">From your courses</div>
                     </div>
                     <div class="stat-card warning">
                         <div class="stat-label">Pending</div>
-                        <div class="stat-value">5</div>
+                        <div class="stat-value" id="statPending">0</div>
                         <div class="stat-change">Due soon</div>
                     </div>
                     <div class="stat-card success">
                         <div class="stat-label">Submitted</div>
-                        <div class="stat-value">15</div>
-                        <div class="stat-change positive">On time</div>
+                        <div class="stat-value" id="statSubmitted">0</div>
+                        <div class="stat-change">On time</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-label">Evaluated</div>
-                        <div class="stat-value">12</div>
-                        <div class="stat-change">Avg: 85%</div>
+                        <div class="stat-value" id="statEvaluated">0</div>
+                        <div class="stat-change">Graded</div>
                     </div>
                 </div>
 
-                <!-- Recent Assignments -->
-                <div class="card">
+                <!-- Recent Assignments: always visible -->
+                <div id="assignmentsCard" class="card">
                     <div class="card-header">
                         <h3 class="card-title">Recent Assignments</h3>
                     </div>
@@ -96,42 +105,7 @@
                                     <th>Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Data Structures - Assignment 3</td>
-                                    <td>Computer Science</td>
-                                    <td>Feb 15, 2026</td>
-                                    <td><span class="badge badge-warning">Pending</span></td>
-                                    <td><a href="submission.html" class="btn btn-sm btn-primary">Submit</a></td>
-                                </tr>
-                                <tr>
-                                    <td>Database Management - Lab 5</td>
-                                    <td>Computer Science</td>
-                                    <td>Feb 18, 2026</td>
-                                    <td><span class="badge badge-warning">Pending</span></td>
-                                    <td><a href="submission.html" class="btn btn-sm btn-primary">Submit</a></td>
-                                </tr>
-                                <tr>
-                                    <td>Web Development - Project 2</td>
-                                    <td>Information Technology</td>
-                                    <td>Feb 12, 2026</td>
-                                    <td><span class="badge badge-success">Submitted</span></td>
-                                    <td><a href="results.html" class="btn btn-sm btn-secondary">View</a></td>
-                                </tr>
-                                <tr>
-                                    <td>Operating Systems - Quiz 4</td>
-                                    <td>Computer Science</td>
-                                    <td>Feb 10, 2026</td>
-                                    <td><span class="badge badge-info">Evaluated</span></td>
-                                    <td><a href="results.html" class="btn btn-sm btn-secondary">Results</a></td>
-                                </tr>
-                                <tr>
-                                    <td>Computer Networks - Assignment 2</td>
-                                    <td>Computer Science</td>
-                                    <td>Feb 08, 2026</td>
-                                    <td><span class="badge badge-info">Evaluated</span></td>
-                                    <td><a href="results.html" class="btn btn-sm btn-secondary">Results</a></td>
-                                </tr>
+                            <tbody id="assignmentsTableBody">
                             </tbody>
                         </table>
                     </div>
@@ -139,6 +113,118 @@
             </div>
         </div>
     </div>
+
+    <script>
+        const API_URL = "http://localhost:5000";
+        const studentId = sessionStorage.getItem("userId");
+        const storedName = sessionStorage.getItem("userName");
+
+        function setNavUser(name, id) {
+            const n = name || storedName || id || "Student";
+            document.getElementById("navUserName").textContent = n;
+            document.getElementById("navStudentId").textContent = id ? `(${id})` : "";
+            const avatar = document.getElementById("navAvatar");
+            avatar.textContent = n.charAt(0).toUpperCase() + (n.split(" ")[1]?.charAt(0) || "").toUpperCase() || "?";
+            if (avatar.textContent.length === 1) avatar.textContent = n.charAt(0).toUpperCase();
+        }
+
+        function setWelcome(name) {
+            document.getElementById("welcomeTitle").textContent = "Welcome back, " + (name || "Student") + "! 👋";
+        }
+
+        function statusBadge(status) {
+            if (!status) return '<span class="badge badge-warning">Pending</span>';
+            if (status.toString().toLowerCase().includes("evaluated")) return '<span class="badge badge-info">Evaluated</span>';
+            if (status.toString().toLowerCase().includes("submitted")) return '<span class="badge badge-success">Submitted</span>';
+            return '<span class="badge badge-warning">Pending</span>';
+        }
+
+        function formatDate(str) {
+            if (!str) return "—";
+            try {
+                const d = new Date(str);
+                return isNaN(d.getTime()) ? str : d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+            } catch (_) { return str; }
+        }
+
+        async function loadDashboard() {
+            const loadingEl = document.getElementById("dashboardLoading");
+            const errorEl = document.getElementById("dashboardError");
+            const statsEl = document.getElementById("statsGrid");
+            const cardEl = document.getElementById("assignmentsCard");
+
+            if (!studentId) {
+                errorEl.style.display = "block";
+                errorEl.textContent = "Not logged in. Redirecting to login...";
+                loadingEl.style.display = "none";
+                showZerosAndEmptyTable();
+                setTimeout(() => { window.location.href = "../login.html"; }, 1500);
+                return;
+            }
+
+            setNavUser(storedName, studentId);
+            setWelcome(storedName);
+
+            function showZerosAndEmptyTable() {
+                document.getElementById("statTotal").textContent = 0;
+                document.getElementById("statPending").textContent = 0;
+                document.getElementById("statSubmitted").textContent = 0;
+                document.getElementById("statEvaluated").textContent = 0;
+                var tbody = document.getElementById("assignmentsTableBody");
+                tbody.innerHTML = "<tr><td colspan=\"5\" class=\"text-center\">No assignments yet.</td></tr>";
+            }
+
+            try {
+                const [infoRes, dashRes] = await Promise.all([
+                    fetch(`${API_URL}/student/${encodeURIComponent(studentId)}/info`),
+                    fetch(`${API_URL}/student/${encodeURIComponent(studentId)}/dashboard`),
+                ]);
+
+                const info = await infoRes.json();
+                const dash = await dashRes.json();
+
+                if (info.success && info.name) {
+                    setNavUser(info.name, info.student_id);
+                    setWelcome(info.name);
+                }
+
+                document.getElementById("statTotal").textContent = (dash.success && dash.total_assignments != null) ? dash.total_assignments : 0;
+                document.getElementById("statPending").textContent = (dash.success && dash.pending_count != null) ? dash.pending_count : 0;
+                document.getElementById("statSubmitted").textContent = (dash.success && dash.submitted_count != null) ? dash.submitted_count : 0;
+                document.getElementById("statEvaluated").textContent = (dash.success && dash.evaluated_count != null) ? dash.evaluated_count : 0;
+
+                const tbody = document.getElementById("assignmentsTableBody");
+                tbody.innerHTML = "";
+                const list = (dash.success && dash.assignments) ? dash.assignments : [];
+                list.forEach(function (a) {
+                    const status = a.submission_status;
+                    const isEval = status && status.toString().toLowerCase().includes("evaluated");
+                    const isSub = status && (status.toString().toLowerCase().includes("submitted") || status.toString().toLowerCase().includes("evaluated"));
+                    const action = isEval
+                        ? '<a href="results.html?assignment_id=' + (a.id || "") + '" class="btn btn-sm btn-secondary">Results</a>'
+                        : isSub
+                            ? '<a href="results.html?assignment_id=' + (a.id || "") + '" class="btn btn-sm btn-secondary">View</a>'
+                            : '<a href="submission.html?assignment_id=' + (a.id || "") + '" class="btn btn-sm btn-primary">Submit</a>';
+                    const row = "<tr><td>" + (a.title || "—") + "</td><td>" + (a.subject || "—") + "</td><td>" + formatDate(a.deadline) + "</td><td>" + statusBadge(status) + "</td><td>" + action + "</td></tr>";
+                    tbody.insertAdjacentHTML("beforeend", row);
+                });
+                if (list.length === 0) tbody.innerHTML = "<tr><td colspan=\"5\" class=\"text-center\">No assignments yet.</td></tr>";
+
+                if (!dashRes.ok || !dash.success) {
+                    errorEl.style.display = "block";
+                    errorEl.textContent = dash.message || "Failed to load dashboard.";
+                }
+                loadingEl.style.display = "none";
+            } catch (err) {
+                showZerosAndEmptyTable();
+                errorEl.style.display = "block";
+                errorEl.textContent = "Cannot connect to server. Make sure the backend is running on port 5000.";
+                loadingEl.style.display = "none";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", loadDashboard);
+    </script>
 </body>
 
 </html>

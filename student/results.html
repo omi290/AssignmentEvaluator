@@ -42,8 +42,8 @@
                 <h2 class="navbar-title">Results</h2>
                 <div class="navbar-right">
                     <div class="user-info">
-                        <div class="user-avatar">AR</div>
-                        <span class="user-name">Arzoooo</span>
+                        <span class="user-avatar" id="navAvatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary-blue); color: white; display: inline-flex; align-items: center; justify-content: center; font-weight: 600;">--</span>
+                        <span class="user-name" id="navUserName">Student</span>
                     </div>
                     <a href="../index.html" class="btn btn-sm btn-secondary">Logout</a>
                 </div>
@@ -56,8 +56,9 @@
                     <p class="page-subtitle">View your grades and feedback</p>
                 </div>
 
-                <!-- Results Table -->
-                <div class="table-container mb-4">
+                <div id="resultsLoading" class="card"><div class="card-body text-center" style="padding: 2rem;">Loading results...</div></div>
+                <div id="resultsError" style="display: none;" class="alert alert-danger"></div>
+                <div id="resultsTableWrap" class="table-container mb-4" style="display: none;">
                     <table class="table">
                         <thead>
                             <tr>
@@ -65,112 +66,24 @@
                                 <th>Subject</th>
                                 <th>Submitted Date</th>
                                 <th>Marks</th>
-                                <th>AI Detection</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>Operating Systems - Quiz 4</td>
-                                <td>Computer Science</td>
-                                <td>Feb 09, 2026</td>
-                                <td><strong style="color: var(--success);">92/100</strong></td>
-                                <td><span class="badge badge-success">Clean</span></td>
-                                <td><button class="btn btn-sm btn-primary">View Details</button></td>
-                            </tr>
-                            <tr>
-                                <td>Computer Networks - Assignment 2</td>
-                                <td>Computer Science</td>
-                                <td>Feb 07, 2026</td>
-                                <td><strong style="color: var(--success);">88/100</strong></td>
-                                <td><span class="badge badge-success">Clean</span></td>
-                                <td><button class="btn btn-sm btn-primary">View Details</button></td>
-                            </tr>
-                            <tr>
-                                <td>Cyber Security - Research Paper</td>
-                                <td>Information Security</td>
-                                <td>Feb 04, 2026</td>
-                                <td><strong style="color: var(--success);">85/100</strong></td>
-                                <td><span class="badge badge-warning">Low Risk</span></td>
-                                <td><button class="btn btn-sm btn-primary">View Details</button></td>
-                            </tr>
-                            <tr>
-                                <td>Database Management - Lab 4</td>
-                                <td>Computer Science</td>
-                                <td>Feb 01, 2026</td>
-                                <td><strong style="color: var(--warning);">78/100</strong></td>
-                                <td><span class="badge badge-success">Clean</span></td>
-                                <td><button class="btn btn-sm btn-primary">View Details</button></td>
-                            </tr>
-                            <tr>
-                                <td>Web Development - Project 1</td>
-                                <td>Information Technology</td>
-                                <td>Jan 28, 2026</td>
-                                <td><strong style="color: var(--success);">95/100</strong></td>
-                                <td><span class="badge badge-success">Clean</span></td>
-                                <td><button class="btn btn-sm btn-primary">View Details</button></td>
-                            </tr>
-                        </tbody>
+                        <tbody id="resultsTableBody"></tbody>
                     </table>
                 </div>
 
-                <!-- Detailed Result Card -->
-                <div class="card">
+                <!-- Detailed Result Card (populated when a result is selected or first item) -->
+                <div id="detailCard" class="card" style="display: none;">
                     <div class="card-header">
-                        <h3 class="card-title">Operating Systems - Quiz 4</h3>
+                        <h3 class="card-title" id="detailTitle">—</h3>
                     </div>
                     <div class="card-body">
-                        <div class="stats-grid mb-3">
-                            <div class="stat-card success">
-                                <div class="stat-label">Score</div>
-                                <div class="stat-value">92/100</div>
-                                <div class="stat-change">Grade: A</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-label">Submitted</div>
-                                <div class="stat-value">Feb 09</div>
-                                <div class="stat-change">On Time</div>
-                            </div>
-                            <div class="stat-card success">
-                                <div class="stat-label">AI Detection</div>
-                                <div class="stat-value">0%</div>
-                                <div class="stat-change">Clean</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-label">Evaluated By</div>
-                                <div class="stat-value" style="font-size: 1.25rem;">Dr. Smith</div>
-                                <div class="stat-change">Feb 10, 2026</div>
-                            </div>
+                        <div class="stats-grid mb-3" id="detailStats"></div>
+                        <div id="detailFeedback" style="display: none;">
+                            <h4 style="margin-bottom: var(--spacing-sm); color: var(--text-dark);">Teacher's Feedback</h4>
+                            <div class="answer-box" id="detailFeedbackText"></div>
                         </div>
-
-                        <div class="alert alert-success mb-3">
-                            <span>✓</span>
-                            <div>
-                                <strong>Excellent Work!</strong> Your submission demonstrates strong understanding
-                                of operating system concepts.
-                            </div>
-                        </div>
-
-                        <div>
-                            <h4 style="margin-bottom: var(--spacing-sm); color: var(--text-dark);">Teacher's Feedback
-                            </h4>
-                            <div class="answer-box">
-                                Your answers show excellent understanding of process scheduling algorithms.
-                                The explanation of Round Robin vs Priority Scheduling was particularly well done.
-
-                                Strengths:
-                                - Clear and concise explanations
-                                - Good use of diagrams
-                                - Proper citation of sources
-
-                                Areas for improvement:
-                                - Could have elaborated more on deadlock prevention
-                                - Minor formatting issues in question 3
-
-                                Overall, great job! Keep up the good work.
-                            </div>
-                        </div>
-
                         <div class="mt-3">
                             <a href="assignments.html" class="btn btn-secondary">Back to Assignments</a>
                         </div>
@@ -180,5 +93,72 @@
         </div>
     </div>
 </body>
-
+<script>
+(function(){
+    var API_URL = "http://localhost:5000";
+    var studentId = sessionStorage.getItem("userId");
+    var n = sessionStorage.getItem("userName") || studentId || "Student";
+    document.getElementById("navUserName").textContent = n;
+    document.getElementById("navAvatar").textContent = (n && n.charAt(0).toUpperCase()) || "?";
+    if (!studentId) {
+        document.getElementById("resultsLoading").style.display = "none";
+        document.getElementById("resultsError").style.display = "block";
+        document.getElementById("resultsError").textContent = "Not logged in. Redirecting...";
+        setTimeout(function(){ window.location.href = "../login.html"; }, 1500);
+        return;
+    }
+    function formatDate(str) {
+        if (!str) return "—";
+        try { var d = new Date(str); return isNaN(d.getTime()) ? str : d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }); } catch (_) { return str; }
+    }
+    function renderDetail(result) {
+        if (!result) return;
+        document.getElementById("detailTitle").textContent = result.assignment_title || "—";
+        var marks = result.marks != null ? result.marks : result.score;
+        var marksStr = marks != null ? (marks + "/100") : "—";
+        document.getElementById("detailStats").innerHTML =
+            "<div class=\"stat-card success\"><div class=\"stat-label\">Score</div><div class=\"stat-value\">" + marksStr + "</div><div class=\"stat-change\">Evaluated</div></div>" +
+            "<div class=\"stat-card\"><div class=\"stat-label\">Submitted</div><div class=\"stat-value\">" + formatDate(result.submitted_at) + "</div><div class=\"stat-change\">On Time</div></div>";
+        var fb = result.feedback;
+        if (fb) {
+            document.getElementById("detailFeedbackText").textContent = fb;
+            document.getElementById("detailFeedback").style.display = "block";
+        } else document.getElementById("detailFeedback").style.display = "none";
+        document.getElementById("detailCard").style.display = "block";
+    }
+    fetch(API_URL + "/student/" + encodeURIComponent(studentId) + "/results")
+        .then(function(r){ return r.json(); })
+        .then(function(data){
+            document.getElementById("resultsLoading").style.display = "none";
+            if (!data.success) {
+                document.getElementById("resultsError").style.display = "block";
+                document.getElementById("resultsError").textContent = data.message || "Failed to load.";
+                return;
+            }
+            var list = data.results || [];
+            var tbody = document.getElementById("resultsTableBody");
+            tbody.innerHTML = "";
+            list.forEach(function(res, idx){
+                var marks = res.marks != null ? res.marks : res.score;
+                var marksStr = marks != null ? ("<strong style=\"color: var(--success);\">" + marks + "/100</strong>") : "—";
+                tbody.insertAdjacentHTML("beforeend",
+                    "<tr><td>" + (res.assignment_title || "—") + "</td><td>" + (res.subject || "—") + "</td><td>" + formatDate(res.submitted_at) + "</td><td>" + marksStr + "</td><td><button type=\"button\" class=\"btn btn-sm btn-primary\" data-idx=\"" + idx + "\">View Details</button></td></tr>");
+            });
+            document.getElementById("resultsTableWrap").style.display = "block";
+            if (list.length === 0) {
+                tbody.insertAdjacentHTML("beforeend", "<tr><td colspan=\"5\" class=\"text-center\">No evaluated results yet.</td></tr>");
+            } else {
+                renderDetail(list[0]);
+                tbody.querySelectorAll("button[data-idx]").forEach(function(btn){
+                    btn.addEventListener("click", function(){ renderDetail(list[parseInt(btn.getAttribute("data-idx"), 10)]); });
+                });
+            }
+        })
+        .catch(function(){
+            document.getElementById("resultsLoading").style.display = "none";
+            document.getElementById("resultsError").style.display = "block";
+            document.getElementById("resultsError").textContent = "Cannot connect to server. Is the backend running on port 5000?";
+        });
+})();
+</script>
 </html>

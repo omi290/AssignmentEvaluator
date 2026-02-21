@@ -42,9 +42,8 @@
                 <h2 class="navbar-title">Evaluate Submission</h2>
                 <div class="navbar-right">
                     <div class="user-info">
-                        <img src="../assets/Omie.png" alt="Omie" class="user-avatar"
-                            style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
-                        <span class="user-name">Omie</span>
+                        <span class="user-avatar" id="navAvatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary-blue); color: white; display: inline-flex; align-items: center; justify-content: center; font-weight: 600;">--</span>
+                        <span class="user-name" id="navUserName">Teacher</span>
                     </div>
                     <a href="../index.html" class="btn btn-sm btn-secondary">Logout</a>
                 </div>
@@ -52,31 +51,29 @@
 
             <!-- Content Area -->
             <div class="content-area">
+                <div id="evaluateLoading" class="card"><div class="card-body text-center" style="padding: 2rem;">Loading submission...</div></div>
+                <div id="evaluateError" style="display: none;" class="alert alert-danger"></div>
+                <div id="evaluateContent" style="display: none;">
                 <div class="page-header">
-                    <h1 class="page-title">Evaluate: Data Structures - Assignment 3</h1>
-                    <p class="page-subtitle">Student: Arzoooo (23011900)</p>
+                    <h1 class="page-title" id="evalPageTitle">Evaluate: —</h1>
+                    <p class="page-subtitle" id="evalStudentSubtitle">Student: —</p>
                 </div>
 
                 <!-- Submission Info -->
                 <div class="card mb-3">
                     <div class="card-body">
-                        <div
-                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-md);">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-md);">
                             <div>
                                 <strong style="color: var(--text-medium);">Submitted:</strong>
-                                <p>Feb 13, 2026 at 08:30 AM</p>
+                                <p id="evalSubmitted">—</p>
                             </div>
                             <div>
                                 <strong style="color: var(--text-medium);">Deadline:</strong>
-                                <p>Feb 15, 2026 at 11:59 PM</p>
+                                <p id="evalDeadline">—</p>
                             </div>
                             <div>
                                 <strong style="color: var(--text-medium);">Status:</strong>
-                                <p><span class="badge badge-success">On Time</span></p>
-                            </div>
-                            <div>
-                                <strong style="color: var(--text-medium);">Files Submitted:</strong>
-                                <p><a href="#" style="color: var(--primary-blue);">📎 assignment3.zip</a></p>
+                                <p id="evalStatus"><span class="badge badge-success">On Time</span></p>
                             </div>
                         </div>
                     </div>
@@ -90,42 +87,7 @@
                             <h3 class="card-title">Student's Submission</h3>
                         </div>
                         <div class="card-body">
-                            <div class="answer-box">
-                                # AVL Tree Implementation
-
-                                ## Introduction
-                                This implementation demonstrates a self-balancing AVL tree with
-                                complete insertion, deletion, and rotation operations.
-
-                                ## Key Features:
-                                - Automatic balancing after insertions
-                                - Height-based balance factor calculation
-                                - Left and right rotation support
-                                - Efficient search operations
-
-                                ## Time Complexity Analysis:
-                                - Insertion: O(log n)
-                                - Deletion: O(log n)
-                                - Search: O(log n)
-                                - Rotation: O(1)
-
-                                ## Code Structure:
-                                The implementation includes:
-                                1. Node class with height tracking
-                                2. AVL Tree class with balance operations
-                                3. Comprehensive test suite
-                                4. Performance benchmarks
-
-                                All operations maintain the AVL tree property where the
-                                balance factor of every node is -1, 0, or 1.
-                            </div>
-                            <div class="mt-2">
-                                <p><strong>Student Comments:</strong></p>
-                                <p style="color: var(--text-medium); font-style: italic;">
-                                    "I've implemented all required operations with proper documentation.
-                                    The test cases cover edge cases including empty trees and single-node scenarios."
-                                </p>
-                            </div>
+                            <div class="answer-box" id="evalSubmissionContent">(Submission content will appear here when available from the database.)</div>
                         </div>
                     </div>
 
@@ -184,9 +146,51 @@
                         </div>
                     </div>
                 </div>
+                </div>
             </div>
         </div>
     </div>
 </body>
-
+<script>
+(function(){
+    var API_URL = "http://localhost:5000";
+    var n = sessionStorage.getItem("userName") || sessionStorage.getItem("userId") || "Teacher";
+    document.getElementById("navUserName").textContent = n;
+    document.getElementById("navAvatar").textContent = (n && n.charAt(0).toUpperCase()) || "?";
+    var params = new URLSearchParams(window.location.search);
+    var submissionId = params.get("submission_id");
+    if (!submissionId) {
+        document.getElementById("evaluateLoading").style.display = "none";
+        document.getElementById("evaluateError").style.display = "block";
+        document.getElementById("evaluateError").textContent = "No submission selected. Go to Submissions to choose one.";
+        setTimeout(function(){ window.location.href = "submissions.html"; }, 2000);
+        return;
+    }
+    function formatDate(str) {
+        if (!str) return "—";
+        try { var d = new Date(str); return isNaN(d.getTime()) ? str : d.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" }); } catch (_) { return str; }
+    }
+    fetch(API_URL + "/submission/" + submissionId)
+        .then(function(r){ return r.json(); })
+        .then(function(data){
+            document.getElementById("evaluateLoading").style.display = "none";
+            if (!data.success || !data.submission) {
+                document.getElementById("evaluateError").style.display = "block";
+                document.getElementById("evaluateError").textContent = data.message || "Submission not found.";
+                return;
+            }
+            var s = data.submission;
+            document.getElementById("evalPageTitle").textContent = "Evaluate: " + (s.assignment_title || "Assignment");
+            document.getElementById("evalStudentSubtitle").textContent = "Student: " + (s.student_name || s.student_id) + " (" + (s.student_id || "") + ")";
+            document.getElementById("evalSubmitted").textContent = formatDate(s.submitted_at);
+            document.getElementById("evalDeadline").textContent = formatDate(s.deadline);
+            document.getElementById("evaluateContent").style.display = "block";
+        })
+        .catch(function(){
+            document.getElementById("evaluateLoading").style.display = "none";
+            document.getElementById("evaluateError").style.display = "block";
+            document.getElementById("evaluateError").textContent = "Cannot connect to server.";
+        });
+})();
+</script>
 </html>

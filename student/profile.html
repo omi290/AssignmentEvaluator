@@ -42,8 +42,8 @@
                 <h2 class="navbar-title">Profile</h2>
                 <div class="navbar-right">
                     <div class="user-info">
-                        <div class="user-avatar">AR</div>
-                        <span class="user-name">Arzoooo</span>
+                        <span class="user-avatar" id="navAvatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary-blue); color: white; display: inline-flex; align-items: center; justify-content: center; font-weight: 600;">--</span>
+                        <span class="user-name" id="navUserName">Student</span>
                     </div>
                     <a href="../index.html" class="btn btn-sm btn-secondary">Logout</a>
                 </div>
@@ -60,13 +60,9 @@
                     <!-- Profile Card -->
                     <div class="card">
                         <div class="card-body text-center">
-                            <div class="user-avatar"
-                                style="width: 120px; height: 120px; font-size: 3rem; margin: 0 auto var(--spacing-md);">
-                                AR
-                            </div>
-                            <h3 style="margin-bottom: var(--spacing-xs);">Arzoooo</h3>
-                            <p style="color: var(--text-medium); margin-bottom: var(--spacing-md);">Computer Science
-                                Student</p>
+                            <span id="profileAvatar" style="width: 120px; height: 120px; border-radius: 50%; background: var(--primary-blue); color: white; margin: 0 auto var(--spacing-md); display: inline-flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 600;">?</span>
+                            <h3 style="margin-bottom: var(--spacing-xs);" id="profileName">—</h3>
+                            <p style="color: var(--text-medium); margin-bottom: var(--spacing-md);">Student</p>
                             <span class="badge badge-success">Active</span>
                         </div>
                     </div>
@@ -83,7 +79,7 @@
                                         style="font-weight: 600; color: var(--text-medium); display: block; margin-bottom: var(--spacing-xs);">
                                         Full Name
                                     </label>
-                                    <p style="color: var(--text-dark); font-size: 1.125rem;">Arzoooo</p>
+                                    <p style="color: var(--text-dark); font-size: 1.125rem;" id="profileFullName">—</p>
                                 </div>
 
                                 <div>
@@ -91,7 +87,7 @@
                                         style="font-weight: 600; color: var(--text-medium); display: block; margin-bottom: var(--spacing-xs);">
                                         Student ID
                                     </label>
-                                    <p style="color: var(--text-dark); font-size: 1.125rem;">23011900</p>
+                                    <p style="color: var(--text-dark); font-size: 1.125rem;" id="profileStudentId">—</p>
                                 </div>
 
                                 <div>
@@ -99,7 +95,7 @@
                                         style="font-weight: 600; color: var(--text-medium); display: block; margin-bottom: var(--spacing-xs);">
                                         Email Address
                                     </label>
-                                    <p style="color: var(--text-dark); font-size: 1.125rem;">arzoooo@college.edu</p>
+                                    <p style="color: var(--text-dark); font-size: 1.125rem;" id="profileEmail">—</p>
                                 </div>
 
                                 <div>
@@ -138,32 +134,32 @@
                     </div>
                 </div>
 
-                <!-- Academic Performance -->
+                <!-- Academic / Assignment Stats (from API) -->
                 <div class="card mt-4">
                     <div class="card-header">
-                        <h3 class="card-title">Academic Performance</h3>
+                        <h3 class="card-title">Assignment Overview</h3>
                     </div>
                     <div class="card-body">
-                        <div class="stats-grid">
+                        <div class="stats-grid" id="profileStats">
                             <div class="stat-card">
-                                <div class="stat-label">Overall GPA</div>
-                                <div class="stat-value">3.8</div>
-                                <div class="stat-change positive">Excellent</div>
+                                <div class="stat-label">Total Assignments</div>
+                                <div class="stat-value" id="statTotal">0</div>
+                                <div class="stat-change">From your courses</div>
                             </div>
                             <div class="stat-card success">
-                                <div class="stat-label">Assignments Completed</div>
-                                <div class="stat-value">42</div>
-                                <div class="stat-change">This semester</div>
+                                <div class="stat-label">Submitted</div>
+                                <div class="stat-value" id="statSubmitted">0</div>
+                                <div class="stat-change">Completed</div>
                             </div>
                             <div class="stat-card">
-                                <div class="stat-label">Average Score</div>
-                                <div class="stat-value">85%</div>
-                                <div class="stat-change positive">+3% from last sem</div>
+                                <div class="stat-label">Evaluated</div>
+                                <div class="stat-value" id="statEvaluated">0</div>
+                                <div class="stat-change">Graded</div>
                             </div>
-                            <div class="stat-card success">
-                                <div class="stat-label">Attendance</div>
-                                <div class="stat-value">94%</div>
-                                <div class="stat-change">Very Good</div>
+                            <div class="stat-card warning">
+                                <div class="stat-label">Pending</div>
+                                <div class="stat-value" id="statPending">0</div>
+                                <div class="stat-change">To submit</div>
                             </div>
                         </div>
                     </div>
@@ -171,6 +167,46 @@
             </div>
         </div>
     </div>
+    <script>
+        (function () {
+            var name = sessionStorage.getItem("userName") || sessionStorage.getItem("userId") || "Student";
+            var id = sessionStorage.getItem("userId");
+            document.getElementById("navUserName").textContent = name;
+            var av = document.getElementById("navAvatar");
+            av.textContent = name.charAt(0).toUpperCase();
+            document.getElementById("profileName").textContent = name;
+            document.getElementById("profileFullName").textContent = name;
+            document.getElementById("profileStudentId").textContent = id || "—";
+            document.getElementById("profileAvatar").textContent = name.charAt(0).toUpperCase();
+            if (id) {
+                fetch("http://localhost:5000/student/" + encodeURIComponent(id) + "/profile")
+                    .then(function (r) { return r.json(); })
+                    .then(function (d) {
+                        if (d.success) {
+                            if (d.name) {
+                                document.getElementById("navUserName").textContent = d.name;
+                                document.getElementById("profileName").textContent = d.name;
+                                document.getElementById("profileFullName").textContent = d.name;
+                                document.getElementById("profileAvatar").textContent = d.name.charAt(0).toUpperCase();
+                            }
+                            document.getElementById("profileEmail").textContent = d.email != null ? d.email : "—";
+                        }
+                    })
+                    .catch(function () {});
+                fetch("http://localhost:5000/student/" + encodeURIComponent(id) + "/dashboard")
+                    .then(function (r) { return r.json(); })
+                    .then(function (d) {
+                        if (d.success) {
+                            document.getElementById("statTotal").textContent = d.total_assignments != null ? d.total_assignments : 0;
+                            document.getElementById("statSubmitted").textContent = d.submitted_count != null ? d.submitted_count : 0;
+                            document.getElementById("statEvaluated").textContent = d.evaluated_count != null ? d.evaluated_count : 0;
+                            document.getElementById("statPending").textContent = d.pending_count != null ? d.pending_count : 0;
+                        }
+                    })
+                    .catch(function () {});
+            }
+        })();
+    </script>
 </body>
 
 </html>

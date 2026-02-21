@@ -42,9 +42,8 @@
                 <h2 class="navbar-title">Submissions</h2>
                 <div class="navbar-right">
                     <div class="user-info">
-                        <img src="../assets/Omie.png" alt="Omie" class="user-avatar"
-                            style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
-                        <span class="user-name">Omie</span>
+                        <span class="user-avatar" id="navAvatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary-blue); color: white; display: inline-flex; align-items: center; justify-content: center; font-weight: 600;">--</span>
+                        <span class="user-name" id="navUserName">Teacher</span>
                     </div>
                     <a href="../index.html" class="btn btn-sm btn-secondary">Logout</a>
                 </div>
@@ -57,43 +56,32 @@
                     <p class="page-subtitle">Review and evaluate student submissions</p>
                 </div>
 
-                <!-- Filter Section -->
-                <div class="card mb-3">
+                <div id="submissionsLoading" class="card"><div class="card-body text-center" style="padding: 2rem;">Loading submissions...</div></div>
+                <div id="submissionsError" style="display: none;" class="alert alert-danger"></div>
+                <!-- Filter Section (populated by JS) -->
+                <div id="filterCard" class="card mb-3" style="display: none;">
                     <div class="card-body">
-                        <div
-                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-md);">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-md);">
                             <div class="form-group" style="margin-bottom: 0;">
                                 <label class="form-label">Filter by Assignment</label>
-                                <select class="form-select">
+                                <select class="form-select" id="filterAssignment">
                                     <option value="">All Assignments</option>
-                                    <option value="1">Data Structures - Assignment 3</option>
-                                    <option value="2">Database Management - Lab 5</option>
-                                    <option value="3">Algorithm Analysis - Problem Set 4</option>
                                 </select>
                             </div>
                             <div class="form-group" style="margin-bottom: 0;">
                                 <label class="form-label">Filter by Status</label>
-                                <select class="form-select">
+                                <select class="form-select" id="filterStatus">
                                     <option value="">All Status</option>
                                     <option value="pending">Pending</option>
                                     <option value="evaluated">Evaluated</option>
-                                </select>
-                            </div>
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label class="form-label">Filter by AI Detection</label>
-                                <select class="form-select">
-                                    <option value="">All</option>
-                                    <option value="clean">Clean</option>
-                                    <option value="low">Low Risk</option>
-                                    <option value="high">High Risk</option>
                                 </select>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Submissions Table -->
-                <div class="table-container">
+                <!-- Submissions Table (populated by JS) -->
+                <div id="submissionsTableWrap" class="table-container" style="display: none;">
                     <table class="table">
                         <thead>
                             <tr>
@@ -101,90 +89,93 @@
                                 <th>Student Name</th>
                                 <th>Assignment</th>
                                 <th>Submission Time</th>
-                                <th>AI Detection</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>23011900</td>
-                                <td>Arzoooo</td>
-                                <td>Data Structures - Assignment 3</td>
-                                <td>Feb 13, 2026 08:30 AM</td>
-                                <td><span class="badge badge-success">Clean (2%)</span></td>
-                                <td><span class="badge badge-warning">Pending</span></td>
-                                <td><a href="evaluate.html" class="btn btn-sm btn-primary">Evaluate</a></td>
-                            </tr>
-                            <tr>
-                                <td>23011901</td>
-                                <td>Om</td>
-                                <td>Database Management - Lab 5</td>
-                                <td>Feb 13, 2026 05:15 AM</td>
-                                <td><span class="badge badge-danger">High Risk (87%)</span></td>
-                                <td><span class="badge badge-warning">Pending</span></td>
-                                <td><a href="evaluate.html" class="btn btn-sm btn-primary">Evaluate</a></td>
-                            </tr>
-                            <tr>
-                                <td>23011902</td>
-                                <td>Tanisha</td>
-                                <td>Algorithm Analysis - Problem Set 4</td>
-                                <td>Feb 12, 2026 11:45 PM</td>
-                                <td><span class="badge badge-warning">Low Risk (23%)</span></td>
-                                <td><span class="badge badge-warning">Pending</span></td>
-                                <td><a href="evaluate.html" class="btn btn-sm btn-primary">Evaluate</a></td>
-                            </tr>
-                            <tr>
-                                <td>23011903</td>
-                                <td>Priyanka</td>
-                                <td>Web Development - Project 2</td>
-                                <td>Feb 12, 2026 09:20 PM</td>
-                                <td><span class="badge badge-success">Clean (5%)</span></td>
-                                <td><span class="badge badge-info">Evaluated (92/100)</span></td>
-                                <td><button class="btn btn-sm btn-secondary">View</button></td>
-                            </tr>
-                            <tr>
-                                <td>23011904</td>
-                                <td>Vaibhav</td>
-                                <td>Operating Systems - Quiz 4</td>
-                                <td>Feb 11, 2026 06:30 PM</td>
-                                <td><span class="badge badge-success">Clean (1%)</span></td>
-                                <td><span class="badge badge-info">Evaluated (88/100)</span></td>
-                                <td><button class="btn btn-sm btn-secondary">View</button></td>
-                            </tr>
-                            <tr>
-                                <td>23011905</td>
-                                <td>Rahul</td>
-                                <td>Computer Networks - Assignment 2</td>
-                                <td>Feb 11, 2026 03:15 PM</td>
-                                <td><span class="badge badge-warning">Low Risk (18%)</span></td>
-                                <td><span class="badge badge-info">Evaluated (85/100)</span></td>
-                                <td><button class="btn btn-sm btn-secondary">View</button></td>
-                            </tr>
-                            <tr>
-                                <td>23011906</td>
-                                <td>Simran</td>
-                                <td>Cyber Security - Research Paper</td>
-                                <td>Feb 10, 2026 10:00 AM</td>
-                                <td><span class="badge badge-success">Clean (3%)</span></td>
-                                <td><span class="badge badge-info">Evaluated (95/100)</span></td>
-                                <td><button class="btn btn-sm btn-secondary">View</button></td>
-                            </tr>
-                            <tr>
-                                <td>23011900</td>
-                                <td>Shalini</td>
-                                <td>Machine Learning - Project Proposal</td>
-                                <td>Feb 10, 2026 07:45 AM</td>
-                                <td><span class="badge badge-danger">High Risk (92%)</span></td>
-                                <td><span class="badge badge-info">Evaluated (45/100)</span></td>
-                                <td><button class="btn btn-sm btn-secondary">View</button></td>
-                            </tr>
-                        </tbody>
+                        <tbody id="submissionsTableBody"></tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
 </body>
-
+<script>
+(function(){
+    var API_URL = "http://localhost:5000";
+    var teacherId = sessionStorage.getItem("userId");
+    var n = sessionStorage.getItem("userName") || teacherId || "Teacher";
+    document.getElementById("navUserName").textContent = n;
+    document.getElementById("navAvatar").textContent = (n && n.charAt(0).toUpperCase()) || "?";
+    if (!teacherId) {
+        document.getElementById("submissionsLoading").style.display = "none";
+        document.getElementById("submissionsError").style.display = "block";
+        document.getElementById("submissionsError").textContent = "Not logged in. Redirecting...";
+        setTimeout(function(){ window.location.href = "../login.html"; }, 1500);
+        return;
+    }
+    function formatDate(str) {
+        if (!str) return "—";
+        try { var d = new Date(str); return isNaN(d.getTime()) ? str : d.toLocaleString("en-IN", { dateStyle: "short", timeStyle: "short" }); } catch (_) { return str; }
+    }
+    function statusBadge(status) {
+        if (!status) return '<span class="badge badge-warning">Pending</span>';
+        if (String(status).toLowerCase().indexOf("evaluated") !== -1) return '<span class="badge badge-info">Evaluated</span>';
+        return '<span class="badge badge-warning">Pending</span>';
+    }
+    function renderTable(list) {
+        var tbody = document.getElementById("submissionsTableBody");
+        tbody.innerHTML = "";
+        list.forEach(function(s){
+            var isEval = s.status && String(s.status).toLowerCase().indexOf("evaluated") !== -1;
+            var action = isEval
+                ? '<button type="button" class="btn btn-sm btn-secondary">View</button>'
+                : '<a href="evaluate.html?submission_id=' + (s.submission_id || s.id) + '&assignment_id=' + (s.assignment_id || "") + '" class="btn btn-sm btn-primary">Evaluate</a>';
+            tbody.insertAdjacentHTML("beforeend",
+                "<tr><td>" + (s.student_id || "—") + "</td><td>" + (s.student_name || s.student_id || "—") + "</td><td>" + (s.assignment_title || "—") + "</td><td>" + formatDate(s.submitted_at) + "</td><td>" + statusBadge(s.status) + "</td><td>" + action + "</td></tr>");
+        });
+        if (list.length === 0) tbody.insertAdjacentHTML("beforeend", "<tr><td colspan=\"6\" class=\"text-center\">No submissions yet.</td></tr>");
+    }
+    fetch(API_URL + "/teacher/" + encodeURIComponent(teacherId) + "/submissions")
+        .then(function(r){ return r.json(); })
+        .then(function(data){
+            document.getElementById("submissionsLoading").style.display = "none";
+            document.getElementById("filterCard").style.display = "block";
+            document.getElementById("submissionsTableWrap").style.display = "block";
+            if (!data.success) {
+                document.getElementById("submissionsError").style.display = "block";
+                document.getElementById("submissionsError").textContent = data.message || "Failed to load.";
+                renderTable([]);
+                return;
+            }
+            var list = data.submissions || [];
+            var assignments = data.assignments || [];
+            var select = document.getElementById("filterAssignment");
+            select.innerHTML = "<option value=\"\">All Assignments</option>";
+            assignments.forEach(function(a){ select.insertAdjacentHTML("beforeend", "<option value=\"" + (a.id || "") + "\">" + (a.title || "—") + "</option>"); });
+            renderTable(list);
+            function filterList() {
+                var assignId = document.getElementById("filterAssignment").value;
+                var statusVal = document.getElementById("filterStatus").value;
+                var filtered = list.filter(function(s){
+                    if (assignId && String(s.assignment_id) !== String(assignId)) return false;
+                    if (statusVal === "pending" && (!s.status || String(s.status).toLowerCase().indexOf("evaluated") !== -1)) return false;
+                    if (statusVal === "evaluated" && (!s.status || String(s.status).toLowerCase().indexOf("evaluated") === -1)) return false;
+                    return true;
+                });
+                renderTable(filtered);
+            }
+            document.getElementById("filterAssignment").addEventListener("change", filterList);
+            document.getElementById("filterStatus").addEventListener("change", filterList);
+        })
+        .catch(function(){
+            document.getElementById("submissionsLoading").style.display = "none";
+            document.getElementById("submissionsError").style.display = "block";
+            document.getElementById("submissionsError").textContent = "Cannot connect to server.";
+            document.getElementById("filterCard").style.display = "block";
+            document.getElementById("submissionsTableWrap").style.display = "block";
+            renderTable([]);
+        });
+})();
+</script>
 </html>

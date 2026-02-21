@@ -1,0 +1,4 @@
+Flask==3.0.3
+psycopg2-binary>=2.9.9    # On Windows: pip install psycopg2-binary --only-binary=:all:
+python-dotenv==1.0.1
+Flask-CORS==4.0.1

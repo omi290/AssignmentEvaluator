@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — Assignment Evaluator System</title>
+    <meta name="description" content="Login to the Assignment Evaluator System as a student or teacher">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* ── Login page background (matches landing page) ── */
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%),
+                url('assets/graphic.jpeg') center/cover no-repeat;
+            padding: var(--spacing-lg);
+        }
+
+        /* ── Login card ── */
+        .login-card {
+            background: var(--bg-white);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-xl);
+            max-width: 460px;
+            width: 100%;
+            animation: fadeIn 0.6s ease;
+        }
+
+        /* ── Header icon ── */
+        .login-icon {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto var(--spacing-md);
+        }
+
+        /* ── Role toggle tabs ── */
+        .role-tabs {
+            display: flex;
+            background: var(--bg-light);
+            border-radius: var(--radius-md);
+            padding: 4px;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .role-tab {
+            flex: 1;
+            padding: 0.625rem;
+            text-align: center;
+            border-radius: calc(var(--radius-md) - 2px);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            color: var(--text-medium);
+            user-select: none;
+        }
+
+        .role-tab.active {
+            background: var(--bg-white);
+            color: var(--primary-blue);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* ── Input icon wrapper ── */
+        .input-icon-wrapper {
+            position: relative;
+        }
+
+        .input-icon-wrapper .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.1rem;
+            pointer-events: none;
+        }
+
+        .input-icon-wrapper .form-input {
+            padding-left: 2.75rem;
+        }
+
+        /* ── Password toggle ── */
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 1.1rem;
+            user-select: none;
+        }
+
+        /* ── Alert message ── */
+        #loginAlert {
+            display: none;
+            padding: 0.875rem 1rem;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            margin-bottom: var(--spacing-md);
+            font-size: 0.9rem;
+        }
+
+        #loginAlert.success {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid var(--success);
+            display: flex;
+        }
+
+        #loginAlert.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid var(--danger);
+            display: flex;
+        }
+
+        /* ── Submit button loading state ── */
+        .btn-login {
+            width: 100%;
+            padding: 0.9375rem;
+            font-size: 1rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            margin-top: var(--spacing-sm);
+        }
+
+        .btn-login:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.45);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* ── Back link ── */
+        .back-link {
+            text-align: center;
+            margin-top: var(--spacing-md);
+            font-size: 0.875rem;
+            color: var(--text-medium);
+        }
+
+        .back-link a {
+            color: var(--primary-blue);
+            font-weight: 500;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* ── Divider ── */
+        .divider {
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.8rem;
+            margin-bottom: var(--spacing-md);
+            position: relative;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: var(--bg-grey);
+        }
+
+        .divider::before {
+            left: 0;
+        }
+
+        .divider::after {
+            right: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-page">
+        <div class="login-card">
+
+            <!-- Header -->
+            <div class="auth-header">
+                <div class="login-icon">🎓</div>
+                <h1 class="auth-title">Welcome Back</h1>
+                <p class="auth-subtitle">Assignment Evaluator System</p>
+            </div>
+
+            <!-- Role Selector -->
+            <div class="role-tabs">
+                <div class="role-tab active" id="tab-student" onclick="selectRole('student')">
+                    🎒 Student
+                </div>
+                <div class="role-tab" id="tab-teacher" onclick="selectRole('teacher')">
+                    👨‍🏫 Teacher
+                </div>
+            </div>
+
+            <!-- Alert Message -->
+            <div id="loginAlert" role="alert"></div>
+
+            <!-- Login Form -->
+            <form id="loginForm" onsubmit="handleLogin(event)" novalidate>
+
+                <!-- Hidden role field -->
+                <input type="hidden" id="roleInput" value="student">
+
+                <!-- ID Field -->
+                <div class="form-group">
+                    <label class="form-label" for="userId">
+                        <span id="idLabel">Student ID</span>
+                    </label>
+                    <div class="input-icon-wrapper">
+                        <span class="input-icon">🪪</span>
+                        <input type="text" id="userId" class="form-input" placeholder="Enter your ID" required
+                            autocomplete="username">
+                    </div>
+                </div>
+
+                <!-- Password Field -->
+                <div class="form-group">
+                    <label class="form-label" for="userPassword">Password</label>
+                    <div class="input-icon-wrapper">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" id="userPassword" class="form-input" placeholder="Enter your password"
+                            required autocomplete="current-password">
+                        <span class="password-toggle" onclick="togglePassword()" title="Show/hide password">👁️</span>
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" class="btn-login" id="loginBtn">
+                    Login
+                </button>
+
+            </form>
+
+            <!-- Back to Home -->
+            <div class="back-link">
+                <a href="index.html">← Back to Home</a>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // ── Auto-select role from URL query param ─────────────────
+        // e.g.  login.html?role=teacher  → pre-selects Teacher tab
+        document.addEventListener("DOMContentLoaded", () => {
+            const params = new URLSearchParams(window.location.search);
+            const role = params.get("role");
+            if (role === "student" || role === "teacher") {
+                selectRole(role);
+            }
+        });
+
+        // ── Backend API URL ───────────────────────────────────────
+        const API_URL = "http://localhost:5000";
+
+        // ── Role selection ────────────────────────────────────────
+        function selectRole(role) {
+            document.getElementById("roleInput").value = role;
+
+            // Update tab styles
+            document.getElementById("tab-student").classList.toggle("active", role === "student");
+            document.getElementById("tab-teacher").classList.toggle("active", role === "teacher");
+
+            // Update ID label
+            document.getElementById("idLabel").textContent =
+                role === "student" ? "Student ID" : "Teacher ID";
+
+            hideAlert();
+        }
+
+        // ── Password visibility toggle ────────────────────────────
+        function togglePassword() {
+            const input = document.getElementById("userPassword");
+            input.type = input.type === "password" ? "text" : "password";
+        }
+
+        // ── Show / hide alert ─────────────────────────────────────
+        function showAlert(message, type) {
+            const alert = document.getElementById("loginAlert");
+            alert.textContent = (type === "success" ? "✅ " : "❌ ") + message;
+            alert.className = type;          // 'success' or 'error'
+            alert.style.display = "flex";
+        }
+
+        function hideAlert() {
+            const alert = document.getElementById("loginAlert");
+            alert.style.display = "none";
+        }
+
+        // ── Login handler ─────────────────────────────────────────
+        async function handleLogin(event) {
+            event.preventDefault();
+            hideAlert();
+
+            const id = document.getElementById("userId").value.trim();
+            const password = document.getElementById("userPassword").value;
+            const role = document.getElementById("roleInput").value;
+
+            // Basic client-side validation
+            if (!id || !password) {
+                showAlert("Please enter both ID and password.", "error");
+                return;
+            }
+
+            // Show loading state
+            const btn = document.getElementById("loginBtn");
+            btn.disabled = true;
+            btn.textContent = "Logging in…";
+
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id, password, role }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    // ✅ Login successful
+                    showAlert(data.message, "success");
+
+                    // Store user details from backend (name, id, role) for dashboard/navbar
+                    sessionStorage.setItem("userId", data.id);
+                    sessionStorage.setItem("userRole", data.role);
+                    sessionStorage.setItem("userName", data.name || data.id);
+
+                    // Redirect based on role after short delay
+                    setTimeout(() => {
+                        if (data.role === "student") {
+                            window.location.href = "student/dashboard.html";
+                        } else {
+                            window.location.href = "teacher/dashboard.html";
+                        }
+                    }, 800);
+
+                } else {
+                    // ❌ Login failed
+                    showAlert(data.message || "Invalid credentials. Please try again.", "error");
+                    btn.disabled = false;
+                    btn.textContent = "Login";
+                }
+
+            } catch (err) {
+                // Network / server error
+                showAlert("Cannot connect to server. Make sure the backend is running on port 5000.", "error");
+                btn.disabled = false;
+                btn.textContent = "Login";
+            }
+        }
+    </script>
+
+</body>
+
+</html>
