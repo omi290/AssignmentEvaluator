@@ -301,3 +301,53 @@ def get_submission_by_id(submission_id):
             "file_url": r.get("file_url") or "",
         },
     }), 200
+
+
+@teacher_bp.route("/teacher/submission/<int:submission_id>/evaluate", methods=["POST"])
+def evaluate_submission(submission_id):
+    """POST /teacher/submission/<id>/evaluate — Save marks and feedback for a submission."""
+    data = request.get_json()
+    if not data:
+        return jsonify({"success": False, "message": "No JSON body."}), 400
+
+    marks = data.get("marks")
+    feedback = (data.get("feedback") or "").strip()
+
+    if marks is None or marks == "":
+        return jsonify({"success": False, "message": "Marks are required."}), 400
+
+    try:
+        marks = float(marks)
+        if marks < 0:
+            return jsonify({"success": False, "message": "Marks cannot be negative."}), 400
+    except (TypeError, ValueError):
+        return jsonify({"success": False, "message": "Marks must be a number."}), 400
+
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute(
+            """
+            UPDATE submissions
+            SET marks = %s, feedback = %s
+            WHERE submission_id = %s
+            RETURNING submission_id
+            """,
+            (marks, feedback or None, submission_id),
+        )
+        row = cur.fetchone()
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        if not row:
+            return jsonify({"success": False, "message": "Submission not found."}), 404
+
+        return jsonify({
+            "success": True,
+            "message": "Evaluation submitted successfully.",
+            "submission_id": submission_id
+        }), 200
+
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500

@@ -42,9 +42,11 @@
                 <h2 class="navbar-title">Dashboard</h2>
                 <div class="navbar-right">
                     <div class="user-info">
-                        <span class="user-avatar" id="navAvatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary-blue); color: white; display: inline-flex; align-items: center; justify-content: center; font-weight: 600;">--</span>
+                        <span class="user-avatar" id="navAvatar"
+                            style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary-blue); color: white; display: inline-flex; align-items: center; justify-content: center; font-weight: 600;">--</span>
                         <span class="user-name" id="navUserName">Loading...</span>
-                        <span class="user-id" id="navTeacherId" style="font-size: 0.85rem; color: var(--text-medium); margin-left: 4px;"></span>
+                        <span class="user-id" id="navTeacherId"
+                            style="font-size: 0.85rem; color: var(--text-medium); margin-left: 4px;"></span>
                     </div>
                     <a href="../index.html" class="btn btn-sm btn-secondary">Logout</a>
                 </div>
@@ -57,9 +59,16 @@
                     <p class="page-subtitle">Here's your teaching overview</p>
                 </div>
 
-                <div id="dashboardLoading" class="card">
-                    <div class="card-body text-center" style="padding: 2rem;">
-                        <p>Loading dashboard...</p>
+                <div id="dashboardLoading" class="loading-container">
+                    <div style="width: 80%; max-width: 600px;">
+                        <div class="skeleton-box shimmer" style="height: 40px; width: 60%; margin-bottom: 2rem;"></div>
+                        <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 2rem;">
+                            <div class="skeleton-box shimmer" style="height: 100px;"></div>
+                            <div class="skeleton-box shimmer" style="height: 100px;"></div>
+                            <div class="skeleton-box shimmer" style="height: 100px;"></div>
+                            <div class="skeleton-box shimmer" style="height: 100px;"></div>
+                        </div>
+                        <div class="skeleton-box shimmer" style="height: 200px;"></div>
                     </div>
                 </div>
                 <div id="dashboardError" style="display: none;" class="alert alert-danger"></div>

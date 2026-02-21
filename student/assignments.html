@@ -42,7 +42,8 @@
                 <h2 class="navbar-title">Assignments</h2>
                 <div class="navbar-right">
                     <div class="user-info">
-                        <span class="user-avatar" id="navAvatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary-blue); color: white; display: inline-flex; align-items: center; justify-content: center; font-weight: 600;">--</span>
+                        <span class="user-avatar" id="navAvatar"
+                            style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary-blue); color: white; display: inline-flex; align-items: center; justify-content: center; font-weight: 600;">--</span>
                         <span class="user-name" id="navUserName">Student</span>
                     </div>
                     <a href="../index.html" class="btn btn-sm btn-secondary">Logout</a>
@@ -56,7 +57,12 @@
                     <p class="page-subtitle">View and submit your assignments</p>
                 </div>
 
-                <div id="assignmentsLoading" class="card"><div class="card-body text-center" style="padding: 2rem;">Loading assignments...</div></div>
+                <div id="assignmentsLoading" class="loading-container">
+                    <div style="width: 80%; max-width: 800px;">
+                        <div class="skeleton-box shimmer" style="height: 40px; width: 40%; margin-bottom: 2rem;"></div>
+                        <div class="skeleton-box shimmer" style="height: 300px;"></div>
+                    </div>
+                </div>
                 <div id="assignmentsError" style="display: none;" class="alert alert-danger"></div>
                 <!-- Assignments Table: always show, empty state when no data -->
                 <div id="assignmentsTableWrap" class="table-container">
@@ -78,67 +84,68 @@
     </div>
 </body>
 <script>
-(function(){
-    var API_URL = "http://localhost:5000";
-    var studentId = sessionStorage.getItem("userId");
-    var n = sessionStorage.getItem("userName") || studentId || "Student";
-    document.getElementById("navUserName").textContent = n;
-    document.getElementById("navAvatar").textContent = (n && n.charAt(0).toUpperCase()) || "?";
-    if (!studentId) {
-        document.getElementById("assignmentsLoading").style.display = "none";
-        document.getElementById("assignmentsError").style.display = "block";
-        document.getElementById("assignmentsError").textContent = "Not logged in. Redirecting...";
-        setTimeout(function(){ window.location.href = "../login.html"; }, 1500);
-        return;
-    }
-    function statusBadge(status) {
-        if (!status) return '<span class="badge badge-warning">Pending</span>';
-        if (String(status).toLowerCase().indexOf("evaluated") !== -1) return '<span class="badge badge-info">Evaluated</span>';
-        if (String(status).toLowerCase().indexOf("submitted") !== -1) return '<span class="badge badge-success">Submitted</span>';
-        return '<span class="badge badge-warning">Pending</span>';
-    }
-    function formatDate(str) {
-        if (!str) return "—";
-        try {
-            var d = new Date(str);
-            return isNaN(d.getTime()) ? str : d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
-        } catch (_) { return str; }
-    }
-    function renderTable(list) {
-        var tbody = document.getElementById("assignmentsTableBody");
-        tbody.innerHTML = "";
-        list.forEach(function(a){
-            var status = a.submission_status;
-            var isEval = status && String(status).toLowerCase().indexOf("evaluated") !== -1;
-            var isSub = status && (String(status).toLowerCase().indexOf("submitted") !== -1 || isEval);
-            var action = isEval
-                ? '<a href="results.html?assignment_id=' + (a.id || "") + '" class="btn btn-sm btn-secondary">Results</a>'
-                : isSub
-                    ? '<a href="results.html?assignment_id=' + (a.id || "") + '" class="btn btn-sm btn-secondary">View</a>'
-                    : '<a href="submission.html?assignment_id=' + (a.id || "") + '" class="btn btn-sm btn-primary">Submit</a>';
-            tbody.insertAdjacentHTML("beforeend",
-                "<tr><td>" + (a.title || "—") + "</td><td>" + (a.subject || "—") + "</td><td>" + formatDate(a.deadline) + "</td><td>" + statusBadge(status) + "</td><td>" + action + "</td></tr>");
-        });
-        if (list.length === 0) tbody.insertAdjacentHTML("beforeend", "<tr><td colspan=\"5\" class=\"text-center\">No assignments yet.</td></tr>");
-    }
-    fetch(API_URL + "/student/" + encodeURIComponent(studentId) + "/assignments")
-        .then(function(r){ return r.json(); })
-        .then(function(data){
-            document.getElementById("assignmentsLoading").style.display = "none";
-            if (!data.success) {
-                document.getElementById("assignmentsError").style.display = "block";
-                document.getElementById("assignmentsError").textContent = data.message || "Failed to load.";
-                renderTable([]);
-                return;
-            }
-            renderTable(data.assignments || []);
-        })
-        .catch(function(){
+    (function () {
+        var API_URL = "http://localhost:5000";
+        var studentId = sessionStorage.getItem("userId");
+        var n = sessionStorage.getItem("userName") || studentId || "Student";
+        document.getElementById("navUserName").textContent = n;
+        document.getElementById("navAvatar").textContent = (n && n.charAt(0).toUpperCase()) || "?";
+        if (!studentId) {
             document.getElementById("assignmentsLoading").style.display = "none";
             document.getElementById("assignmentsError").style.display = "block";
-            document.getElementById("assignmentsError").textContent = "Cannot connect to server. Is the backend running on port 5000?";
-            renderTable([]);
-        });
-})();
+            document.getElementById("assignmentsError").textContent = "Not logged in. Redirecting...";
+            setTimeout(function () { window.location.href = "../login.html"; }, 1500);
+            return;
+        }
+        function statusBadge(status) {
+            if (!status) return '<span class="badge badge-warning">Pending</span>';
+            if (String(status).toLowerCase().indexOf("evaluated") !== -1) return '<span class="badge badge-info">Evaluated</span>';
+            if (String(status).toLowerCase().indexOf("submitted") !== -1) return '<span class="badge badge-success">Submitted</span>';
+            return '<span class="badge badge-warning">Pending</span>';
+        }
+        function formatDate(str) {
+            if (!str) return "—";
+            try {
+                var d = new Date(str);
+                return isNaN(d.getTime()) ? str : d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+            } catch (_) { return str; }
+        }
+        function renderTable(list) {
+            var tbody = document.getElementById("assignmentsTableBody");
+            tbody.innerHTML = "";
+            list.forEach(function (a) {
+                var status = a.submission_status;
+                var isEval = status && String(status).toLowerCase().indexOf("evaluated") !== -1;
+                var isSub = status && (String(status).toLowerCase().indexOf("submitted") !== -1 || isEval);
+                var action = isEval
+                    ? '<a href="results.html?assignment_id=' + (a.id || "") + '" class="btn btn-sm btn-secondary">Results</a>'
+                    : isSub
+                        ? '<a href="results.html?assignment_id=' + (a.id || "") + '" class="btn btn-sm btn-secondary">View</a>'
+                        : '<a href="submission.html?assignment_id=' + (a.id || "") + '" class="btn btn-sm btn-primary">Submit</a>';
+                tbody.insertAdjacentHTML("beforeend",
+                    "<tr><td>" + (a.title || "—") + "</td><td>" + (a.subject || "—") + "</td><td>" + formatDate(a.deadline) + "</td><td>" + statusBadge(status) + "</td><td>" + action + "</td></tr>");
+            });
+            if (list.length === 0) tbody.insertAdjacentHTML("beforeend", "<tr><td colspan=\"5\" class=\"text-center\">No assignments yet.</td></tr>");
+        }
+        fetch(API_URL + "/student/" + encodeURIComponent(studentId) + "/assignments")
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                document.getElementById("assignmentsLoading").style.display = "none";
+                if (!data.success) {
+                    document.getElementById("assignmentsError").style.display = "block";
+                    document.getElementById("assignmentsError").textContent = data.message || "Failed to load.";
+                    renderTable([]);
+                    return;
+                }
+                renderTable(data.assignments || []);
+            })
+            .catch(function () {
+                document.getElementById("assignmentsLoading").style.display = "none";
+                document.getElementById("assignmentsError").style.display = "block";
+                document.getElementById("assignmentsError").textContent = "Cannot connect to server. Is the backend running on port 5000?";
+                renderTable([]);
+            });
+    })();
 </script>
+
 </html>
