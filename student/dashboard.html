@@ -74,8 +74,8 @@
                 </div>
                 <div id="dashboardError" style="display: none;" class="alert alert-danger"></div>
 
-                <!-- Stats Grid: always visible, show 0 when empty or on error -->
-                <div id="statsGrid" class="stats-grid">
+                <!-- Stats Grid: hidden until loaded -->
+                <div id="statsGrid" class="stats-grid" style="display: none;">
                     <div class="stat-card">
                         <div class="stat-label">Total Assignments</div>
                         <div class="stat-value" id="statTotal">0</div>
@@ -98,8 +98,8 @@
                     </div>
                 </div>
 
-                <!-- Recent Assignments: always visible -->
-                <div id="assignmentsCard" class="card">
+                <!-- Recent Assignments: hidden until loaded -->
+                <div id="assignmentsCard" class="card" style="display: none;">
                     <div class="card-header">
                         <h3 class="card-title">Recent Assignments</h3>
                     </div>
@@ -222,6 +222,9 @@
                 if (!dashRes.ok || !dash.success) {
                     errorEl.style.display = "block";
                     errorEl.textContent = dash.message || "Failed to load dashboard.";
+                } else {
+                    statsEl.style.display = "grid";
+                    cardEl.style.display = "block";
                 }
                 loadingEl.style.display = "none";
             } catch (err) {

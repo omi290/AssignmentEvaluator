@@ -925,3 +925,22 @@ select {
 .gap-4 {
   gap: var(--spacing-lg);
 }
+/* === ACTIONS & DROPDOWNS === */
+.action-dropdown { position: relative; display: inline-block; }
+.action-btn { background: none; border: none; font-size: 1.5rem; color: var(--text-medium); padding: 4px 8px; border-radius: var(--radius-sm); line-height: 1; }
+.action-btn:hover { background: var(--bg-grey); color: var(--text-dark); }
+.dropdown-menu { position: absolute; right: 0; top: 100%; background: var(--bg-white); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); border: 1px solid var(--bg-grey); min-width: 150px; z-index: 1000; display: none; overflow: hidden; }
+.dropdown-menu.show { display: block; }
+.dropdown-item { display: flex; align-items: center; gap: var(--spacing-sm); padding: 0.75rem 1rem; font-size: 0.875rem; color: var(--text-medium); width: 100%; text-align: left; transition: background var(--transition-fast); }
+.dropdown-item:hover { background: var(--bg-lighter); color: var(--primary-blue); }
+.dropdown-item.danger:hover { color: var(--danger); }
+
+/* === MODAL === */
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: none; align-items: center; justify-content: center; z-index: 2000; backdrop-filter: blur(4px); }
+.modal-overlay.show { display: flex; }
+.modal-container { background: var(--bg-white); border-radius: var(--radius-lg); width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-xl); animation: fadeIn 0.3s ease; }
+.modal-header { padding: var(--spacing-md) var(--spacing-lg); border-bottom: 1px solid var(--bg-grey); display: flex; align-items: center; justify-content: space-between; }
+.modal-title { font-size: 1.25rem; font-weight: 600; }
+.modal-close { background: none; font-size: 1.5rem; color: var(--text-light); }
+.modal-body { padding: var(--spacing-lg); }
+.modal-footer { padding: var(--spacing-md) var(--spacing-lg); border-top: 1px solid var(--bg-grey); display: flex; justify-content: flex-end; gap: var(--spacing-sm); }

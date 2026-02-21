@@ -42,7 +42,8 @@
                 <h2 class="navbar-title">Create Assignment</h2>
                 <div class="navbar-right">
                     <div class="user-info">
-                        <span class="user-avatar" id="navAvatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary-blue); color: white; display: inline-flex; align-items: center; justify-content: center; font-weight: 600;">--</span>
+                        <span class="user-avatar" id="navAvatar"
+                            style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary-blue); color: white; display: inline-flex; align-items: center; justify-content: center; font-weight: 600;">--</span>
                         <span class="user-name" id="navUserName">Teacher</span>
                     </div>
                     <a href="../index.html" class="btn btn-sm btn-secondary">Logout</a>
@@ -80,7 +81,8 @@
                             <div class="form-group">
                                 <label class="form-label" for="description">Description (Optional)</label>
                                 <textarea id="description" class="form-textarea"
-                                    placeholder="Provide detailed instructions for the assignment..." rows="6"></textarea>
+                                    placeholder="Provide detailed instructions for the assignment..."
+                                    rows="6"></textarea>
                             </div>
 
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md);">
@@ -111,7 +113,8 @@
                                     </div>
                                     <input type="file" id="fileInput" accept=".pdf,.doc,.docx" style="display: none;">
                                 </div>
-                                <small id="fileError" style="color: var(--danger); display: none;">Please select a file.</small>
+                                <small id="fileError" style="color: var(--danger); display: none;">Please select a
+                                    file.</small>
                             </div>
 
                             <div class="form-group">
@@ -145,7 +148,7 @@
         </div>
     </div>
     <script>
-        (function(){
+        (function () {
             var API_URL = "http://localhost:5000";
             var teacherId = sessionStorage.getItem("userId");
             var name = sessionStorage.getItem("userName") || teacherId || "Teacher";
@@ -154,12 +157,12 @@
             var fileInput = document.getElementById("fileInput");
             var fileLabel = document.getElementById("fileLabel");
             var fileDropZone = document.getElementById("fileDropZone");
-            fileDropZone.onclick = function(){ fileInput.click(); };
-            fileInput.onchange = function(){
+            fileDropZone.onclick = function () { fileInput.click(); };
+            fileInput.onchange = function () {
                 document.getElementById("fileError").style.display = "none";
                 if (fileInput.files.length) fileLabel.innerHTML = "📎 " + fileInput.files[0].name + " <br><small>Click to change</small>";
             };
-            document.querySelector("form").onsubmit = function(e){
+            document.querySelector("form").onsubmit = function (e) {
                 e.preventDefault();
                 document.getElementById("createAlert").style.display = "none";
                 var title = document.getElementById("assignment-title").value.trim();
@@ -169,35 +172,43 @@
                 var date = document.getElementById("deadline-date").value;
                 var time = document.getElementById("deadline-time").value || "23:59";
                 var maxMarks = document.getElementById("max-marks").value.trim();
-                if (!title){ showAlert("Please enter assignment title.", "error"); return; }
-                if (!subject){ showAlert("Please select a subject.", "error"); return; }
-                if (!date){ showAlert("Please select deadline date.", "error"); return; }
-                if (!maxMarks || isNaN(parseInt(maxMarks, 10)) || parseInt(maxMarks, 10) < 1){ showAlert("Please enter valid maximum marks.", "error"); return; }
-                if (!fileInput.files || fileInput.files.length === 0){ document.getElementById("fileError").style.display = "block"; showAlert("Please upload a question paper (PDF/DOC/DOCX).", "error"); return; }
+                if (!title) { showAlert("Please enter assignment title.", "error"); return; }
+                if (!subject) { showAlert("Please select a subject.", "error"); return; }
+                if (!date) { showAlert("Please select deadline date.", "error"); return; }
+                if (!maxMarks || isNaN(parseInt(maxMarks, 10)) || parseInt(maxMarks, 10) < 1) { showAlert("Please enter valid maximum marks.", "error"); return; }
+                if (!fileInput.files || fileInput.files.length === 0) { document.getElementById("fileError").style.display = "block"; showAlert("Please upload a question paper (PDF/DOC/DOCX).", "error"); return; }
                 var deadline = date + " " + time + ":00";
-                var fileUrl = fileInput.files[0].name;
+
+                var formData = new FormData();
+                formData.append("title", title);
+                formData.append("subject", subjectText);
+                formData.append("description", description || "");
+                formData.append("deadline", deadline);
+                formData.append("max_marks", parseInt(maxMarks, 10));
+                formData.append("file", fileInput.files[0]);
+
                 var btn = document.getElementById("submitBtn");
                 btn.disabled = true;
                 btn.textContent = "Creating...";
+
                 fetch(API_URL + "/teacher/" + encodeURIComponent(teacherId) + "/assignments", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ title: title, subject: subjectText, description: description || null, deadline: deadline, max_marks: parseInt(maxMarks, 10), file_url: fileUrl })
+                    body: formData
                 })
-                .then(function(r){ return r.json(); })
-                .then(function(data){
-                    btn.disabled = false;
-                    btn.textContent = "✓ Create Assignment";
-                    if (data.success){ showAlert("Assignment created successfully.", "success"); setTimeout(function(){ window.location.href = "dashboard.html"; }, 1200); }
-                    else showAlert(data.message || "Failed to create assignment.", "error");
-                })
-                .catch(function(){
-                    btn.disabled = false;
-                    btn.textContent = "✓ Create Assignment";
-                    showAlert("Cannot connect to server.", "error");
-                });
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        btn.disabled = false;
+                        btn.textContent = "✓ Create Assignment";
+                        if (data.success) { showAlert("Assignment created successfully.", "success"); setTimeout(function () { window.location.href = "dashboard.html"; }, 1200); }
+                        else showAlert(data.message || "Failed to create assignment.", "error");
+                    })
+                    .catch(function () {
+                        btn.disabled = false;
+                        btn.textContent = "✓ Create Assignment";
+                        showAlert("Cannot connect to server.", "error");
+                    });
             };
-            function showAlert(msg, type){
+            function showAlert(msg, type) {
                 var el = document.getElementById("createAlert");
                 el.textContent = msg;
                 el.className = "alert " + (type === "success" ? "alert-success" : "alert-danger");

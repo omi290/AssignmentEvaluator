@@ -6,6 +6,10 @@
 from flask import Blueprint, request, jsonify
 import psycopg2.extras
 from db import get_db_connection
+import time
+from werkzeug.utils import secure_filename
+from supabase import create_client, Client
+from config import SUPABASE_URL, SUPABASE_KEY
 
 student_bp = Blueprint("student", __name__)
 
@@ -16,9 +20,12 @@ def _row_to_assignment(r):
         "id": r.get("assignment_id"),
         "title": r.get("title") or "",
         "subject": r.get("subject") or "",
+        "description": r.get("description") or "",
         "deadline": (r.get("deadline") or "").__str__() if r.get("deadline") else "",
+        "submission_id": r.get("submission_id"),
         "submission_status": r.get("submission_status"),
-        "submitted_at": (r.get("submitted_at") or "").__str__() if r.get("submitted_at") else None,
+        "file_url": r.get("file_url") or "",
+        "submitted_at": (r.get("submitted_at") or "").__str__() if r.get("submitted_at") else "",
     }
 
 
@@ -165,7 +172,11 @@ def get_student_assignments(student_id):
             SELECT
                 a.assignment_id,
                 a.title,
+                a.subject,
+                a.description,
                 a.deadline::text AS deadline,
+                s.submission_id,
+                s.file_url,
                 s.submitted_at,
                 CASE
                     WHEN s.submission_id IS NULL THEN 'pending'
@@ -227,20 +238,53 @@ def get_student_results(student_id):
 
 @student_bp.route("/student/<student_id>/submissions", methods=["POST"])
 def create_submission(student_id):
-    """POST /student/<student_id>/submissions — Create a submission. file_url required (e.g. filename or URL)."""
-    data = request.get_json()
-    if not data:
-        return jsonify({"success": False, "message": "No JSON body."}), 400
-    assignment_id = data.get("assignment_id")
-    file_url = (data.get("file_url") or "").strip()
+    """POST /student/<student_id>/submissions — Create a submission with Supabase Storage upload."""
+    from flask import current_app
+    from werkzeug.utils import secure_filename
+    from supabase import create_client, Client
+    from config import SUPABASE_URL, SUPABASE_KEY
+    import time
+
+    assignment_id = request.form.get("assignment_id")
     if not assignment_id:
         return jsonify({"success": False, "message": "assignment_id is required."}), 400
+
+    file_url = None
+    if 'file' in request.files:
+        file = request.files['file']
+        if file.filename != '':
+            filename = secure_filename(file.filename)
+            filename = f"{int(time.time())}_{filename}"
+            
+            try:
+                # Initialize Supabase client
+                supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+                
+                # Read file content
+                file_content = file.read()
+                
+                # Upload to Supabase 'submissions' bucket
+                res = supabase.storage.from_('submissions').upload(
+                    path=filename,
+                    file=file_content,
+                    file_options={"content-type": file.content_type}
+                )
+                
+                # Get Public URL
+                public_url_res = supabase.storage.from_('submissions').get_public_url(filename)
+                file_url = public_url_res
+                
+            except Exception as e:
+                return jsonify({"success": False, "message": f"Storage upload failed: {str(e)}"}), 500
+    
     if not file_url:
-        return jsonify({"success": False, "message": "File upload is required (file_url)."}), 400
+        return jsonify({"success": False, "message": "File upload is required."}), 400
+
     try:
         assignment_id = int(assignment_id)
     except (TypeError, ValueError):
         return jsonify({"success": False, "message": "Invalid assignment_id."}), 400
+
     try:
         conn = get_db_connection()
         cur = conn.cursor()
@@ -261,8 +305,9 @@ def create_submission(student_id):
         return jsonify({"success": False, "message": str(e)}), 500
     return jsonify({
         "success": True,
-        "message": "Submission recorded.",
+        "message": "Submission uploaded to Supabase.",
         "submission_id": sid,
+        "file_url": file_url
     }), 201
 
 
@@ -274,8 +319,8 @@ def get_assignment_by_id(assignment_id):
         cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         cur.execute(
             """
-            SELECT a.assignment_id, a.title, a.teacher_id,
-                   a.deadline::text AS deadline, a.description
+            SELECT a.assignment_id, a.title, a.teacher_id, a.subject,
+                   a.deadline::text AS deadline, a.description, a.file_url
             FROM assignments a
             WHERE a.assignment_id = %s
             """,
@@ -294,8 +339,96 @@ def get_assignment_by_id(assignment_id):
         "assignment": {
             "id": r.get("assignment_id"),
             "title": r.get("title") or "",
-            "subject": r.get("subject") or "",  # empty if column not in table
+            "subject": r.get("subject") or "",
             "deadline": r.get("deadline") or "",
             "description": r.get("description") or "",
+            "file_url": r.get("file_url") or "",
         },
     }), 200
+
+
+@student_bp.route("/student/<student_id>/submission/<int:submission_id>", methods=["PUT"])
+def update_submission(student_id, submission_id):
+    """PUT /student/<student_id>/submission/<id> — Replace submission file."""
+
+    if 'file' not in request.files:
+        return jsonify({"success": False, "message": "No file uploaded."}), 400
+    
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"success": False, "message": "Empty filename."}), 400
+
+    filename = secure_filename(file.filename)
+    filename = f"{int(time.time())}_{filename}"
+
+    try:
+        supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+        file_content = file.read()
+        
+        # Upload new file
+        supabase.storage.from_('submissions').upload(
+            path=filename,
+            file=file_content,
+            file_options={"content-type": file.content_type}
+        )
+        new_file_url = supabase.storage.from_('submissions').get_public_url(filename)
+
+        conn = get_db_connection()
+        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        
+        cur.execute("SELECT file_url FROM submissions WHERE submission_id = %s", (submission_id,))
+        old = cur.fetchone()
+        
+        cur.execute(
+            """
+            UPDATE submissions
+            SET file_url = %s, submitted_at = CURRENT_TIMESTAMP
+            WHERE submission_id = %s AND student_id = %s
+            """,
+            (new_file_url, submission_id, student_id)
+        )
+        conn.commit()
+        
+        if old and old['file_url']:
+            try:
+                old_fname = old['file_url'].split("/")[-1]
+                supabase.storage.from_('submissions').remove([old_fname])
+            except: pass
+
+        cur.close()
+        conn.close()
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+
+    return jsonify({"success": True, "message": "Submission updated successfully.", "file_url": new_file_url}), 200
+
+
+@student_bp.route("/student/<student_id>/submission/<int:submission_id>", methods=["DELETE"])
+def delete_submission(student_id, submission_id):
+    """DELETE /student/<student_id>/submission/<id> — Delete submission and its file."""
+
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+        cur.execute("SELECT file_url FROM submissions WHERE submission_id = %s AND student_id = %s", (submission_id, student_id))
+        row = cur.fetchone()
+        
+        if not row:
+            return jsonify({"success": False, "message": "Submission not found."}), 404
+
+        if row['file_url']:
+            try:
+                supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+                fname = row['file_url'].split("/")[-1]
+                supabase.storage.from_('submissions').remove([fname])
+            except: pass
+
+        cur.execute("DELETE FROM submissions WHERE submission_id = %s", (submission_id,))
+        conn.commit()
+        cur.close()
+        conn.close()
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+
+    return jsonify({"success": True, "message": "Submission deleted."}), 200

@@ -91,8 +91,17 @@
                                 <h3 class="card-title">Student's Submission</h3>
                             </div>
                             <div class="card-body">
-                                <div class="answer-box" id="evalSubmissionContent">(Submission content will appear here
-                                    when available from the database.)</div>
+                                <div id="evalSubmissionContent" class="answer-box">
+                                    <p id="submissionFileLinkWrap" style="display: none;">
+                                        <strong>Submitted File:</strong>
+                                        <a href="#" id="submissionFileLink" target="_blank"
+                                            style="color: var(--primary-blue); text-decoration: underline;">Download
+                                            File</a>
+                                    </p>
+                                    <div id="submissionTextContent" style="margin-top: 1rem; color: var(--text-light);">
+                                        (Click the link above to view/download the student's submission)
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -197,6 +206,15 @@
                 document.getElementById("evalStudentSubtitle").textContent = "Student: " + (s.student_name || s.student_id) + " (" + (s.student_id || "") + ")";
                 document.getElementById("evalSubmitted").textContent = formatDate(s.submitted_at);
                 document.getElementById("evalDeadline").textContent = formatDate(s.deadline);
+
+                if (s.file_url) {
+                    var link = document.getElementById("submissionFileLink");
+                    link.textContent = "📎 View/Download Submission";
+                    link.href = s.file_url;
+                    link.setAttribute("target", "_blank");
+                    document.getElementById("submissionFileLinkWrap").style.display = "block";
+                }
+
                 document.getElementById("evaluateContent").style.display = "block";
             })
             .catch(function () {

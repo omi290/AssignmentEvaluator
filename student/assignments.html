@@ -64,8 +64,8 @@
                     </div>
                 </div>
                 <div id="assignmentsError" style="display: none;" class="alert alert-danger"></div>
-                <!-- Assignments Table: always show, empty state when no data -->
-                <div id="assignmentsTableWrap" class="table-container">
+                <!-- Assignments Table: hidden until data is loaded -->
+                <div id="assignmentsTableWrap" class="table-container" style="display: none;">
                     <table class="table">
                         <thead>
                             <tr>
@@ -79,6 +79,32 @@
                         <tbody id="assignmentsTableBody"></tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Submission Modal -->
+    <div id="editModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Submission</h3>
+                <button class="modal-close" onclick="closeEditModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <p>Current Submission: <a id="currentFileLink" href="#" target="_blank">View File</a></p>
+                </div>
+                <form id="editForm">
+                    <input type="hidden" id="editSubmissionId">
+                    <div class="form-group">
+                        <label class="form-label">Upload New File *</label>
+                        <input type="file" id="editFile" class="form-input" accept=".pdf,.doc,.docx" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+                <button class="btn btn-primary" id="saveEditBtn">Replace Submission</button>
             </div>
         </div>
     </div>
@@ -113,19 +139,113 @@
         function renderTable(list) {
             var tbody = document.getElementById("assignmentsTableBody");
             tbody.innerHTML = "";
+            window._allAssignments = list;
             list.forEach(function (a) {
                 var status = a.submission_status;
                 var isEval = status && String(status).toLowerCase().indexOf("evaluated") !== -1;
-                var isSub = status && (String(status).toLowerCase().indexOf("submitted") !== -1 || isEval);
-                var action = isEval
-                    ? '<a href="results.html?assignment_id=' + (a.id || "") + '" class="btn btn-sm btn-secondary">Results</a>'
-                    : isSub
-                        ? '<a href="results.html?assignment_id=' + (a.id || "") + '" class="btn btn-sm btn-secondary">View</a>'
-                        : '<a href="submission.html?assignment_id=' + (a.id || "") + '" class="btn btn-sm btn-primary">Submit</a>';
+                var isSub = status && String(status).toLowerCase().indexOf("submitted") !== -1;
+
+                var action = "";
+                if (isEval) {
+                    action = '<a href="results.html?assignment_id=' + (a.id || "") + '" class="btn btn-sm btn-secondary">Results</a>';
+                } else if (isSub) {
+                    action = `
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <a href="results.html?assignment_id=${a.id || ""}" class="btn btn-sm btn-secondary">View</a>
+                            <div class="action-dropdown">
+                                <button class="action-btn" onclick="toggleDropdown('${a.submission_id}')">⋮</button>
+                                <div id="dropdown-${a.submission_id}" class="dropdown-menu">
+                                    <button class="dropdown-item" onclick="prepareEdit('${a.submission_id}')">✏️ Edit</button>
+                                    <button class="dropdown-item danger" onclick="confirmDelete('${a.submission_id}')">🗑️ Delete</button>
+                                </div>
+                            </div>
+                        </div>`;
+                } else {
+                    action = '<a href="submission.html?assignment_id=' + (a.id || "") + '" class="btn btn-sm btn-primary">Submit</a>';
+                }
+
                 tbody.insertAdjacentHTML("beforeend",
                     "<tr><td>" + (a.title || "—") + "</td><td>" + (a.subject || "—") + "</td><td>" + formatDate(a.deadline) + "</td><td>" + statusBadge(status) + "</td><td>" + action + "</td></tr>");
             });
             if (list.length === 0) tbody.insertAdjacentHTML("beforeend", "<tr><td colspan=\"5\" class=\"text-center\">No assignments yet.</td></tr>");
+        }
+
+        function toggleDropdown(id) {
+            if (event) event.stopPropagation();
+            const el = document.getElementById(`dropdown-${id}`);
+            const isShow = el.classList.contains('show');
+            document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
+            if (!isShow) el.classList.add('show');
+        }
+
+        window.onclick = function (event) {
+            document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
+        }
+
+        function prepareEdit(id) {
+            const a = window._allAssignments.find(item => item.submission_id == id);
+            if (!a) return;
+            document.getElementById('editSubmissionId').value = a.submission_id;
+            document.getElementById('currentFileLink').href = a.file_url;
+            document.getElementById('editModal').classList.add('show');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('show');
+        }
+
+        document.getElementById('saveEditBtn').onclick = async function () {
+            const id = document.getElementById('editSubmissionId').value;
+            const fileInput = document.getElementById("editFile");
+            if (fileInput.files.length === 0) {
+                alert("Please select a file.");
+                return;
+            }
+
+            const btn = this;
+            btn.disabled = true;
+            btn.textContent = "Updating...";
+
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            try {
+                const res = await fetch(`${API_URL}/student/${studentId}/submission/${id}`, {
+                    method: 'PUT',
+                    body: formData
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert("Submission updated successfully!");
+                    window.location.reload();
+                } else {
+                    alert("Update failed: " + data.message);
+                }
+            } catch (err) {
+                alert("Error connecting to server.");
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Replace Submission";
+            }
+        };
+
+        async function confirmDelete(id) {
+            if (!confirm("Are you sure you want to delete your submission?")) return;
+
+            try {
+                const res = await fetch(`${API_URL}/student/${studentId}/submission/${id}`, {
+                    method: 'DELETE'
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert("Submission deleted.");
+                    window.location.reload();
+                } else {
+                    alert("Deletion failed: " + data.message);
+                }
+            } catch (err) {
+                alert("Error connecting to server.");
+            }
         }
         fetch(API_URL + "/student/" + encodeURIComponent(studentId) + "/assignments")
             .then(function (r) { return r.json(); })
@@ -137,6 +257,7 @@
                     renderTable([]);
                     return;
                 }
+                document.getElementById("assignmentsTableWrap").style.display = "block";
                 renderTable(data.assignments || []);
             })
             .catch(function () {

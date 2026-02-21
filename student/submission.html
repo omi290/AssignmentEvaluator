@@ -42,7 +42,8 @@
                 <h2 class="navbar-title">Submit Assignment</h2>
                 <div class="navbar-right">
                     <div class="user-info">
-                        <span class="user-avatar" id="navAvatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary-blue); color: white; display: inline-flex; align-items: center; justify-content: center; font-weight: 600;">--</span>
+                        <span class="user-avatar" id="navAvatar"
+                            style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary-blue); color: white; display: inline-flex; align-items: center; justify-content: center; font-weight: 600;">--</span>
                         <span class="user-name" id="navUserName">Student</span>
                     </div>
                     <a href="../index.html" class="btn btn-sm btn-secondary">Logout</a>
@@ -51,182 +52,207 @@
 
             <!-- Content Area -->
             <div class="content-area">
-                <div id="submissionLoading" class="card"><div class="card-body text-center" style="padding: 2rem;">Loading assignment...</div></div>
+                <div id="submissionLoading" class="card">
+                    <div class="card-body text-center" style="padding: 2rem;">Loading assignment...</div>
+                </div>
                 <div id="submissionError" style="display: none;" class="alert alert-danger"></div>
                 <div id="submissionContent" style="display: none;">
-                <div class="page-header">
-                    <h1 class="page-title" id="assignmentTitle">—</h1>
-                    <p class="page-subtitle">Submit your assignment before the deadline</p>
-                </div>
-
-                <!-- Deadline Alert -->
-                <div class="alert alert-warning">
-                    <span>⏰</span>
-                    <div>
-                        <strong>Deadline:</strong> <span id="deadlineText">—</span>
-                        <br>
-                        <small id="deadlineRemaining"></small>
+                    <div class="page-header">
+                        <h1 class="page-title" id="assignmentTitle">—</h1>
+                        <p class="page-subtitle">Submit your assignment before the deadline</p>
                     </div>
-                </div>
 
-                <!-- Assignment Details -->
-                <div class="card mb-3">
-                    <div class="card-header">
-                        <h3 class="card-title">Assignment Details</h3>
+                    <!-- Deadline Alert -->
+                    <div class="alert alert-warning">
+                        <span>⏰</span>
+                        <div>
+                            <strong>Deadline:</strong> <span id="deadlineText">—</span>
+                            <br>
+                            <small id="deadlineRemaining"></small>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <p><strong>Subject:</strong> <span id="assignmentSubject">—</span></p>
-                        <p class="mt-2" id="assignmentDescriptionWrap" style="display: none;">
-                            <strong>Description:</strong><br>
-                            <span id="assignmentDescription"></span>
-                        </p>
-                    </div>
-                </div>
 
-                <!-- Submission Form -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Submit Your Work</h3>
+                    <!-- Assignment Details -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">Assignment Details</h3>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Subject:</strong> <span id="assignmentSubject">—</span></p>
+                            <p class="mt-2" id="assignmentQuestionPaperWrap" style="display: none;">
+                                <strong>Question Paper:</strong>
+                                <a href="#" id="assignmentQuestionPaper" target="_blank"
+                                    style="color: var(--primary-blue); text-decoration: underline;">Download PDF</a>
+                            </p>
+                            <p class="mt-2" id="assignmentDescriptionWrap" style="display: none;">
+                                <strong>Description:</strong><br>
+                                <span id="assignmentDescription"></span>
+                            </p>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <form id="submissionForm">
-                            <div class="form-group">
-                                <label class="form-label">Comments (Optional)</label>
-                                <textarea class="form-textarea" id="comments" placeholder="Add any comments or notes about your submission..." rows="4"></textarea>
-                            </div>
 
-                            <div class="form-group">
-                                <label class="form-label">Upload File (Required) *</label>
-                                <div class="form-file" id="fileDropZone" style="cursor: pointer;">
-                                    <div class="form-file-label" id="fileLabel">
-                                        📎 Click to browse or drag and drop your file here
-                                        <br>
-                                        <small style="color: var(--text-light);">PDF, DOC, DOCX (Max 10MB)</small>
-                                    </div>
-                                    <input type="file" id="fileInput" accept=".pdf,.doc,.docx" style="display: none;">
+                    <!-- Submission Form -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Submit Your Work</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="submissionForm">
+                                <div class="form-group">
+                                    <label class="form-label">Comments (Optional)</label>
+                                    <textarea class="form-textarea" id="comments"
+                                        placeholder="Add any comments or notes about your submission..."
+                                        rows="4"></textarea>
                                 </div>
-                                <small id="fileError" style="color: var(--danger); display: none;">Please select a file to upload.</small>
-                            </div>
 
-                            <div class="alert alert-info">
-                                <span>ℹ️</span>
-                                <div><strong>Note:</strong> Your submission will be checked for AI-generated content and plagiarism. Make sure all work is original.</div>
-                            </div>
+                                <div class="form-group">
+                                    <label class="form-label">Upload File (Required) *</label>
+                                    <div class="form-file" id="fileDropZone" style="cursor: pointer;">
+                                        <div class="form-file-label" id="fileLabel">
+                                            📎 Click to browse or drag and drop your file here
+                                            <br>
+                                            <small style="color: var(--text-light);">PDF, DOC, DOCX (Max 10MB)</small>
+                                        </div>
+                                        <input type="file" id="fileInput" accept=".pdf,.doc,.docx"
+                                            style="display: none;">
+                                    </div>
+                                    <small id="fileError" style="color: var(--danger); display: none;">Please select a
+                                        file to upload.</small>
+                                </div>
 
-                            <div class="flex gap-2 mt-3">
-                                <button type="submit" class="btn btn-success" id="submitBtn">✓ Submit Assignment</button>
-                                <a href="assignments.html" class="btn btn-secondary">Cancel</a>
-                            </div>
-                            <div id="submitAlert" style="display: none; margin-top: 1rem;" class="alert"></div>
-                        </form>
+                                <div class="alert alert-info">
+                                    <span>ℹ️</span>
+                                    <div><strong>Note:</strong> Your submission will be checked for AI-generated content
+                                        and plagiarism. Make sure all work is original.</div>
+                                </div>
+
+                                <div class="flex gap-2 mt-3">
+                                    <button type="submit" class="btn btn-success" id="submitBtn">✓ Submit
+                                        Assignment</button>
+                                    <a href="assignments.html" class="btn btn-secondary">Cancel</a>
+                                </div>
+                                <div id="submitAlert" style="display: none; margin-top: 1rem;" class="alert"></div>
+                            </form>
+                        </div>
                     </div>
-                </div>
                 </div>
             </div>
         </div>
     </div>
 </body>
 <script>
-(function(){
-    var API_URL = "http://localhost:5000";
-    var n = sessionStorage.getItem("userName") || sessionStorage.getItem("userId") || "Student";
-    document.getElementById("navUserName").textContent = n;
-    document.getElementById("navAvatar").textContent = (n && n.charAt(0).toUpperCase()) || "?";
-    var params = new URLSearchParams(window.location.search);
-    var assignmentId = params.get("assignment_id");
-    if (!assignmentId) {
-        document.getElementById("submissionLoading").style.display = "none";
-        document.getElementById("submissionError").style.display = "block";
-        document.getElementById("submissionError").textContent = "No assignment selected. Go to Assignments to choose one.";
-        setTimeout(function(){ window.location.href = "assignments.html"; }, 2000);
-        return;
-    }
-    function formatDeadline(str) {
-        if (!str) return "—";
-        try {
-            var d = new Date(str);
-            return isNaN(d.getTime()) ? str : d.toLocaleString("en-IN", { dateStyle: "long", timeStyle: "short" });
-        } catch (_) { return str; }
-    }
-    function daysRemaining(str) {
-        if (!str) return "";
-        try {
-            var d = new Date(str);
-            if (isNaN(d.getTime())) return "";
-            var now = new Date();
-            var diff = Math.ceil((d - now) / (1000 * 60 * 60 * 24));
-            if (diff < 0) return "Deadline passed.";
-            if (diff === 0) return "Due today.";
-            return "You have " + diff + " day(s) remaining.";
-        } catch (_) { return ""; }
-    }
-    fetch(API_URL + "/assignment/" + assignmentId)
-        .then(function(r){ return r.json(); })
-        .then(function(data){
-            document.getElementById("submissionLoading").style.display = "none";
-            if (!data.success || !data.assignment) {
-                document.getElementById("submissionError").style.display = "block";
-                document.getElementById("submissionError").textContent = data.message || "Assignment not found.";
-                return;
-            }
-            var a = data.assignment;
-            document.getElementById("assignmentTitle").textContent = a.title || "Assignment";
-            document.getElementById("deadlineText").textContent = formatDeadline(a.deadline);
-            document.getElementById("deadlineRemaining").textContent = daysRemaining(a.deadline);
-            document.getElementById("assignmentSubject").textContent = a.subject || "—";
-            if (a.description) {
-                document.getElementById("assignmentDescription").textContent = a.description;
-                document.getElementById("assignmentDescriptionWrap").style.display = "block";
-            }
-            document.getElementById("submissionContent").style.display = "block";
-        })
-        .catch(function(){
+    (function () {
+        var API_URL = "http://localhost:5000";
+        var n = sessionStorage.getItem("userName") || sessionStorage.getItem("userId") || "Student";
+        document.getElementById("navUserName").textContent = n;
+        document.getElementById("navAvatar").textContent = (n && n.charAt(0).toUpperCase()) || "?";
+        var params = new URLSearchParams(window.location.search);
+        var assignmentId = params.get("assignment_id");
+        if (!assignmentId) {
             document.getElementById("submissionLoading").style.display = "none";
             document.getElementById("submissionError").style.display = "block";
-            document.getElementById("submissionError").textContent = "Cannot connect to server.";
-        });
-    var fileInput = document.getElementById("fileInput");
-    var fileLabel = document.getElementById("fileLabel");
-    var fileDropZone = document.getElementById("fileDropZone");
-    var fileErrorEl = document.getElementById("fileError");
-    var submitAlertEl = document.getElementById("submitAlert");
-    if (fileDropZone && fileInput) {
-        fileDropZone.onclick = function(){ fileInput.click(); };
-        fileInput.onchange = function(){
-            if (fileErrorEl) fileErrorEl.style.display = "none";
-            if (fileInput.files.length && fileLabel) fileLabel.innerHTML = "📎 " + fileInput.files[0].name + " <br><small>Click to change</small>";
-        };
-    }
-    var form = document.getElementById("submissionForm");
-    if (form && fileInput) form.onsubmit = function(e){
-        e.preventDefault();
-        document.getElementById("submitAlert").style.display = "none";
-        document.getElementById("fileError").style.display = "none";
-        if (!fileInput.files || fileInput.files.length === 0){
-            if (fileErrorEl) fileErrorEl.style.display = "block";
-            if (submitAlertEl){ submitAlertEl.textContent = "Please select a file (PDF/DOC/DOCX) to upload."; submitAlertEl.className = "alert alert-danger"; submitAlertEl.style.display = "block"; }
+            document.getElementById("submissionError").textContent = "No assignment selected. Go to Assignments to choose one.";
+            setTimeout(function () { window.location.href = "assignments.html"; }, 2000);
             return;
         }
-        var btn = document.getElementById("submitBtn");
-        btn.disabled = true;
-        btn.textContent = "Submitting...";
-        fetch(API_URL + "/student/" + encodeURIComponent(sessionStorage.getItem("userId")) + "/submissions", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ assignment_id: assignmentId, file_url: fileInput.files[0].name })
-        })
-        .then(function(r){ return r.json(); })
-        .then(function(data){
-            btn.disabled = false;
-            btn.textContent = "✓ Submit Assignment";
-            if (submitAlertEl){ submitAlertEl.style.display = "block"; if (data.success){ submitAlertEl.className = "alert alert-success"; submitAlertEl.textContent = "Submission recorded successfully."; setTimeout(function(){ window.location.href = "assignments.html"; }, 1200); } else { submitAlertEl.className = "alert alert-danger"; submitAlertEl.textContent = data.message || "Failed to submit."; } }
-        })
-        .catch(function(){
-            btn.disabled = false;
-            btn.textContent = "✓ Submit Assignment";
-            if (submitAlertEl){ submitAlertEl.className = "alert alert-danger"; submitAlertEl.textContent = "Cannot connect to server."; submitAlertEl.style.display = "block"; }
-        });
-    };
-})();
+        function formatDeadline(str) {
+            if (!str) return "—";
+            try {
+                var d = new Date(str);
+                return isNaN(d.getTime()) ? str : d.toLocaleString("en-IN", { dateStyle: "long", timeStyle: "short" });
+            } catch (_) { return str; }
+        }
+        function daysRemaining(str) {
+            if (!str) return "";
+            try {
+                var d = new Date(str);
+                if (isNaN(d.getTime())) return "";
+                var now = new Date();
+                var diff = Math.ceil((d - now) / (1000 * 60 * 60 * 24));
+                if (diff < 0) return "Deadline passed.";
+                if (diff === 0) return "Due today.";
+                return "You have " + diff + " day(s) remaining.";
+            } catch (_) { return ""; }
+        }
+        fetch(API_URL + "/assignment/" + assignmentId)
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                document.getElementById("submissionLoading").style.display = "none";
+                if (!data.success || !data.assignment) {
+                    document.getElementById("submissionError").style.display = "block";
+                    document.getElementById("submissionError").textContent = data.message || "Assignment not found.";
+                    return;
+                }
+                var a = data.assignment;
+                document.getElementById("assignmentTitle").textContent = a.title || "Assignment";
+                document.getElementById("deadlineText").textContent = formatDeadline(a.deadline);
+                document.getElementById("deadlineRemaining").textContent = daysRemaining(a.deadline);
+                document.getElementById("assignmentSubject").textContent = a.subject || "—";
+                if (a.file_url) {
+                    var qp = document.getElementById("assignmentQuestionPaper");
+                    qp.textContent = "📎 Download Question Paper";
+                    qp.href = a.file_url;
+                    qp.setAttribute("target", "_blank");
+                    document.getElementById("assignmentQuestionPaperWrap").style.display = "block";
+                }
+                if (a.description) {
+                    document.getElementById("assignmentDescription").textContent = a.description;
+                    document.getElementById("assignmentDescriptionWrap").style.display = "block";
+                }
+                document.getElementById("submissionContent").style.display = "block";
+            })
+            .catch(function () {
+                document.getElementById("submissionLoading").style.display = "none";
+                document.getElementById("submissionError").style.display = "block";
+                document.getElementById("submissionError").textContent = "Cannot connect to server.";
+            });
+        var fileInput = document.getElementById("fileInput");
+        var fileLabel = document.getElementById("fileLabel");
+        var fileDropZone = document.getElementById("fileDropZone");
+        var fileErrorEl = document.getElementById("fileError");
+        var submitAlertEl = document.getElementById("submitAlert");
+        if (fileDropZone && fileInput) {
+            fileDropZone.onclick = function () { fileInput.click(); };
+            fileInput.onchange = function () {
+                if (fileErrorEl) fileErrorEl.style.display = "none";
+                if (fileInput.files.length && fileLabel) fileLabel.innerHTML = "📎 " + fileInput.files[0].name + " <br><small>Click to change</small>";
+            };
+        }
+        var form = document.getElementById("submissionForm");
+        if (form && fileInput) form.onsubmit = function (e) {
+            e.preventDefault();
+            document.getElementById("submitAlert").style.display = "none";
+            document.getElementById("fileError").style.display = "none";
+            if (!fileInput.files || fileInput.files.length === 0) {
+                if (fileErrorEl) fileErrorEl.style.display = "block";
+                if (submitAlertEl) { submitAlertEl.textContent = "Please select a file (PDF/DOC/DOCX) to upload."; submitAlertEl.className = "alert alert-danger"; submitAlertEl.style.display = "block"; }
+                return;
+            }
+            var btn = document.getElementById("submitBtn");
+            btn.disabled = true;
+            btn.textContent = "Submitting...";
+
+            var formData = new FormData();
+            formData.append("assignment_id", assignmentId);
+            formData.append("file", fileInput.files[0]);
+
+            fetch(API_URL + "/student/" + encodeURIComponent(sessionStorage.getItem("userId")) + "/submissions", {
+                method: "POST",
+                body: formData
+            })
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    btn.disabled = false;
+                    btn.textContent = "✓ Submit Assignment";
+                    if (submitAlertEl) { submitAlertEl.style.display = "block"; if (data.success) { submitAlertEl.className = "alert alert-success"; submitAlertEl.textContent = "Submission recorded successfully."; setTimeout(function () { window.location.href = "assignments.html"; }, 1200); } else { submitAlertEl.className = "alert alert-danger"; submitAlertEl.textContent = data.message || "Failed to submit."; } }
+                })
+                .catch(function () {
+                    btn.disabled = false;
+                    btn.textContent = "✓ Submit Assignment";
+                    if (submitAlertEl) { submitAlertEl.className = "alert alert-danger"; submitAlertEl.textContent = "Cannot connect to server."; submitAlertEl.style.display = "block"; }
+                });
+        };
+    })();
 </script>
+
 </html>

@@ -20,12 +20,20 @@ SUPABASE_DB_PORT     = os.getenv("SUPABASE_DB_PORT", "6543")
 SECRET_KEY = os.getenv("SECRET_KEY", "fallback_dev_key")
 
 
+# ── Upload settings ──────────────────────────────────────────
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
+
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
 # ── Validate that required vars are present ──────────────────
 REQUIRED_VARS = [
     "SUPABASE_DB_HOST",
     "SUPABASE_DB_NAME",
     "SUPABASE_DB_USER",
     "SUPABASE_DB_PASSWORD",
+    "SUPABASE_URL",
+    "SUPABASE_KEY",
 ]
 
 missing = [var for var in REQUIRED_VARS if not os.getenv(var)]

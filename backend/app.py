@@ -3,9 +3,10 @@
 # Assignment Evaluator — Phase-2 Backend
 # ============================================================
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
-from config import SECRET_KEY
+from config import SECRET_KEY, UPLOAD_FOLDER
+import os
 
 # Import route blueprints
 from routes.auth import auth_bp
@@ -15,6 +16,10 @@ from routes.teacher import teacher_bp
 # ── Create Flask app ──────────────────────────────────────────
 app = Flask(__name__)
 app.config["SECRET_KEY"] = SECRET_KEY
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+# Ensure upload directory exists
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # ── Enable CORS so the frontend (HTML/JS) can call this API ──
 # Update the origins list if your frontend is hosted elsewhere
@@ -32,7 +37,8 @@ def index():
     return jsonify({
         "status":  "ok",
         "message": "Assignment Evaluator Backend is running.",
-        "phase":   "Phase-2"
+        "phase":   "Phase-2",
+        "storage": "Supabase"
     }), 200
 
 
