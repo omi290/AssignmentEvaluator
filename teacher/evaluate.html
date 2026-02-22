@@ -9,6 +9,18 @@
 </head>
 
 <body>
+    <!-- Page Loader -->
+    <div id="page-loader">
+        <div class="loader-letter">
+            <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 15,100 C 20,60 35,20 50,10 C 65,20 80,60 85,100 M 25,65 Q 50,55 75,65" />
+            </svg>
+        </div>
+        <div class="loader-dots">
+            <span></span><span></span><span></span>
+        </div>
+    </div>
+
     <div class="portal-wrapper">
         <!-- Sidebar -->
         <aside class="sidebar">
@@ -123,7 +135,8 @@
 
                                 <!-- Marks -->
                                 <div class="form-group">
-                                    <label class="form-label">Marks Obtained (out of 100)</label>
+                                    <label class="form-label">Marks Obtained (out of <span
+                                            id="maxMarksLabel">100</span>)</label>
                                     <input type="number" id="evalMarks" class="form-input" placeholder="Enter marks"
                                         min="0" max="100">
                                 </div>
@@ -134,8 +147,9 @@
                                         <p style="margin-bottom: var(--spacing-xs);"><strong>AI Suggested
                                                 Marks:</strong>
                                         </p>
-                                        <div style="font-size: 1.5rem; color: var(--primary-blue); font-weight: 700;">
-                                            92/100
+                                        <div id="aiSuggestedMarks"
+                                            style="font-size: 1.5rem; color: var(--primary-blue); font-weight: 700;">
+                                            —/—
                                         </div>
                                         <small style="color: var(--text-medium);">
                                             Based on: Code quality, documentation, test coverage, and complexity
@@ -215,12 +229,22 @@
                     document.getElementById("submissionFileLinkWrap").style.display = "block";
                 }
 
+                if (s.max_marks) {
+                    document.getElementById("maxMarksLabel").textContent = s.max_marks;
+                    document.getElementById("evalMarks").max = s.max_marks;
+                    // Proportional AI suggested marks for demo (e.g. 92% of max)
+                    var suggested = Math.round(s.max_marks * 0.92);
+                    document.getElementById("aiSuggestedMarks").textContent = suggested + "/" + s.max_marks;
+                }
+
                 document.getElementById("evaluateContent").style.display = "block";
+                hideLoader();
             })
             .catch(function () {
                 document.getElementById("evaluateLoading").style.display = "none";
                 document.getElementById("evaluateError").style.display = "block";
                 document.getElementById("evaluateError").textContent = "Cannot connect to server.";
+                hideLoader();
             });
 
         // Handle evaluation submission
@@ -276,5 +300,7 @@
         }
     })();
 </script>
+<script>function hideLoader() { var l = document.getElementById('page-loader'); if (l) setTimeout(function () { l.classList.add('hide'); }, 200); } window.addEventListener('load', function () { setTimeout(function () { var l = document.getElementById('page-loader'); if (l && !l.classList.contains('hide')) l.classList.add('hide'); }, 8000); });</script>
+</body>
 
 </html>

@@ -24,6 +24,7 @@ def _row_to_assignment(r):
         "deadline": (r.get("deadline") or "").__str__() if r.get("deadline") else "",
         "submission_id": r.get("submission_id"),
         "submission_status": r.get("submission_status"),
+        "max_marks": r.get("max_marks"),
         "file_url": r.get("file_url") or "",
         "submitted_at": (r.get("submitted_at") or "").__str__() if r.get("submitted_at") else "",
     }
@@ -126,7 +127,9 @@ def get_student_dashboard(student_id):
             SELECT
                 a.assignment_id,
                 a.title,
+                a.subject,
                 a.deadline::text AS deadline,
+                a.max_marks,
                 s.marks,
                 s.submitted_at,
                 CASE
@@ -174,6 +177,7 @@ def get_student_assignments(student_id):
                 a.title,
                 a.subject,
                 a.description,
+                a.max_marks,
                 a.deadline::text AS deadline,
                 s.submission_id,
                 s.file_url,
@@ -208,7 +212,8 @@ def get_student_results(student_id):
         cur.execute(
             """
             SELECT s.submission_id, s.assignment_id, s.submitted_at, s.marks, s.feedback,
-                   a.title AS assignment_title
+                   s.file_url AS submission_file_url, s.student_comments,
+                   a.title AS assignment_title, a.max_marks, a.file_url AS assignment_file_url
             FROM submissions s
             JOIN assignments a ON a.assignment_id = s.assignment_id
             WHERE s.student_id = %s AND s.marks IS NOT NULL
@@ -230,6 +235,10 @@ def get_student_results(student_id):
             "subject": r.get("subject") or "",
             "submitted_at": (r.get("submitted_at") or "").__str__() if r.get("submitted_at") else "",
             "marks": r.get("marks"),
+            "max_marks": r.get("max_marks"),
+            "submission_file_url": r.get("submission_file_url") or "",
+            "assignment_file_url": r.get("assignment_file_url") or "",
+            "student_comments": r.get("student_comments") or "",
             "score": r.get("score"),
             "feedback": r.get("feedback") or "",
         })
@@ -246,6 +255,7 @@ def create_submission(student_id):
     import time
 
     assignment_id = request.form.get("assignment_id")
+    comments = request.form.get("comments", "").strip()
     if not assignment_id:
         return jsonify({"success": False, "message": "assignment_id is required."}), 400
 
@@ -290,11 +300,11 @@ def create_submission(student_id):
         cur = conn.cursor()
         cur.execute(
             """
-            INSERT INTO submissions (assignment_id, student_id, file_url)
-            VALUES (%s, %s, %s)
+            INSERT INTO submissions (assignment_id, student_id, file_url, student_comments)
+            VALUES (%s, %s, %s, %s)
             RETURNING submission_id
             """,
-            (assignment_id, student_id, file_url),
+            (assignment_id, student_id, file_url, comments or None),
         )
         row = cur.fetchone()
         conn.commit()

@@ -9,6 +9,18 @@
 </head>
 
 <body>
+    <!-- Page Loader -->
+    <div id="page-loader">
+        <div class="loader-letter">
+            <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 15,100 C 20,60 35,20 50,10 C 65,20 80,60 85,100 M 25,65 Q 50,55 75,65" />
+            </svg>
+        </div>
+        <div class="loader-dots">
+            <span></span><span></span><span></span>
+        </div>
+    </div>
+
     <div class="portal-wrapper">
         <!-- Sidebar -->
         <aside class="sidebar">
@@ -42,7 +54,8 @@
                 <h2 class="navbar-title">Results</h2>
                 <div class="navbar-right">
                     <div class="user-info">
-                        <span class="user-avatar" id="navAvatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary-blue); color: white; display: inline-flex; align-items: center; justify-content: center; font-weight: 600;">--</span>
+                        <span class="user-avatar" id="navAvatar"
+                            style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary-blue); color: white; display: inline-flex; align-items: center; justify-content: center; font-weight: 600;">--</span>
                         <span class="user-name" id="navUserName">Student</span>
                     </div>
                     <a href="../index.html" class="btn btn-sm btn-secondary">Logout</a>
@@ -56,7 +69,9 @@
                     <p class="page-subtitle">View your grades and feedback</p>
                 </div>
 
-                <div id="resultsLoading" class="card"><div class="card-body text-center" style="padding: 2rem;">Loading results...</div></div>
+                <div id="resultsLoading" class="card">
+                    <div class="card-body text-center" style="padding: 2rem;">Loading results...</div>
+                </div>
                 <div id="resultsError" style="display: none;" class="alert alert-danger"></div>
                 <div id="resultsTableWrap" class="table-container mb-4" style="display: none;">
                     <table class="table">
@@ -75,15 +90,33 @@
 
                 <!-- Detailed Result Card (populated when a result is selected or first item) -->
                 <div id="detailCard" class="card" style="display: none;">
-                    <div class="card-header">
+                    <div class="card-header"
+                        style="display: flex; justify-content: space-between; align-items: center;">
                         <h3 class="card-title" id="detailTitle">—</h3>
+                        <div id="fileButtons" style="display: flex; gap: 0.75rem;">
+                            <a href="#" id="viewAssignmentBtn" target="_blank" class="btn btn-sm btn-secondary"
+                                style="display: none;">📄 View Question Paper</a>
+                            <a href="#" id="viewSubmissionBtn" target="_blank" class="btn btn-sm btn-primary"
+                                style="display: none;">📥 Your Submission</a>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="stats-grid mb-3" id="detailStats"></div>
-                        <div id="detailFeedback" style="display: none;">
-                            <h4 style="margin-bottom: var(--spacing-sm); color: var(--text-dark);">Teacher's Feedback</h4>
-                            <div class="answer-box" id="detailFeedbackText"></div>
+
+                        <div id="studentCommentsSection" class="mb-3" style="display: none;">
+                            <h4 style="margin-bottom: var(--spacing-xs); color: var(--text-dark); font-size: 1rem;">Your
+                                Description/Comments</h4>
+                            <div class="answer-box" id="studentCommentsText"
+                                style="min-height: auto; padding: var(--spacing-sm); background: var(--bg-lighter);">
+                            </div>
                         </div>
+
+                        <div id="detailFeedback" style="display: none;">
+                            <h4 style="margin-bottom: var(--spacing-xs); color: var(--text-dark); font-size: 1rem;">
+                                Teacher's Feedback</h4>
+                            <div class="answer-box" id="detailFeedbackText" style="min-height: 100px;"></div>
+                        </div>
+
                         <div class="mt-3">
                             <a href="assignments.html" class="btn btn-secondary">Back to Assignments</a>
                         </div>
@@ -94,71 +127,116 @@
     </div>
 </body>
 <script>
-(function(){
-    var API_URL = "http://localhost:5000";
-    var studentId = sessionStorage.getItem("userId");
-    var n = sessionStorage.getItem("userName") || studentId || "Student";
-    document.getElementById("navUserName").textContent = n;
-    document.getElementById("navAvatar").textContent = (n && n.charAt(0).toUpperCase()) || "?";
-    if (!studentId) {
-        document.getElementById("resultsLoading").style.display = "none";
-        document.getElementById("resultsError").style.display = "block";
-        document.getElementById("resultsError").textContent = "Not logged in. Redirecting...";
-        setTimeout(function(){ window.location.href = "../login.html"; }, 1500);
-        return;
-    }
-    function formatDate(str) {
-        if (!str) return "—";
-        try { var d = new Date(str); return isNaN(d.getTime()) ? str : d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }); } catch (_) { return str; }
-    }
-    function renderDetail(result) {
-        if (!result) return;
-        document.getElementById("detailTitle").textContent = result.assignment_title || "—";
-        var marks = result.marks != null ? result.marks : result.score;
-        var marksStr = marks != null ? (marks + "/100") : "—";
-        document.getElementById("detailStats").innerHTML =
-            "<div class=\"stat-card success\"><div class=\"stat-label\">Score</div><div class=\"stat-value\">" + marksStr + "</div><div class=\"stat-change\">Evaluated</div></div>" +
-            "<div class=\"stat-card\"><div class=\"stat-label\">Submitted</div><div class=\"stat-value\">" + formatDate(result.submitted_at) + "</div><div class=\"stat-change\">On Time</div></div>";
-        var fb = result.feedback;
-        if (fb) {
-            document.getElementById("detailFeedbackText").textContent = fb;
-            document.getElementById("detailFeedback").style.display = "block";
-        } else document.getElementById("detailFeedback").style.display = "none";
-        document.getElementById("detailCard").style.display = "block";
-    }
-    fetch(API_URL + "/student/" + encodeURIComponent(studentId) + "/results")
-        .then(function(r){ return r.json(); })
-        .then(function(data){
-            document.getElementById("resultsLoading").style.display = "none";
-            if (!data.success) {
-                document.getElementById("resultsError").style.display = "block";
-                document.getElementById("resultsError").textContent = data.message || "Failed to load.";
-                return;
-            }
-            var list = data.results || [];
-            var tbody = document.getElementById("resultsTableBody");
-            tbody.innerHTML = "";
-            list.forEach(function(res, idx){
-                var marks = res.marks != null ? res.marks : res.score;
-                var marksStr = marks != null ? ("<strong style=\"color: var(--success);\">" + marks + "/100</strong>") : "—";
-                tbody.insertAdjacentHTML("beforeend",
-                    "<tr><td>" + (res.assignment_title || "—") + "</td><td>" + (res.subject || "—") + "</td><td>" + formatDate(res.submitted_at) + "</td><td>" + marksStr + "</td><td><button type=\"button\" class=\"btn btn-sm btn-primary\" data-idx=\"" + idx + "\">View Details</button></td></tr>");
-            });
-            document.getElementById("resultsTableWrap").style.display = "block";
-            if (list.length === 0) {
-                tbody.insertAdjacentHTML("beforeend", "<tr><td colspan=\"5\" class=\"text-center\">No evaluated results yet.</td></tr>");
-            } else {
-                renderDetail(list[0]);
-                tbody.querySelectorAll("button[data-idx]").forEach(function(btn){
-                    btn.addEventListener("click", function(){ renderDetail(list[parseInt(btn.getAttribute("data-idx"), 10)]); });
-                });
-            }
-        })
-        .catch(function(){
+    (function () {
+        var API_URL = "http://localhost:5000";
+        var studentId = sessionStorage.getItem("userId");
+        var n = sessionStorage.getItem("userName") || studentId || "Student";
+        document.getElementById("navUserName").textContent = n;
+        document.getElementById("navAvatar").textContent = (n && n.charAt(0).toUpperCase()) || "?";
+        if (!studentId) {
             document.getElementById("resultsLoading").style.display = "none";
             document.getElementById("resultsError").style.display = "block";
-            document.getElementById("resultsError").textContent = "Cannot connect to server. Is the backend running on port 5000?";
-        });
-})();
+            document.getElementById("resultsError").textContent = "Not logged in. Redirecting...";
+            setTimeout(function () { window.location.href = "../login.html"; }, 1500);
+            return;
+        }
+        function formatDate(str) {
+            if (!str) return "—";
+            try { var d = new Date(str); return isNaN(d.getTime()) ? str : d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }); } catch (_) { return str; }
+        }
+        function renderDetail(result) {
+            if (!result) return;
+            document.getElementById("detailTitle").textContent = result.assignment_title || "—";
+            var marks = result.marks != null ? result.marks : result.score;
+            var maxMarks = result.max_marks || 100;
+            var marksStr = marks != null ? (marks + "/" + maxMarks) : "—";
+            document.getElementById("detailStats").innerHTML =
+                "<div class=\"stat-card success\"><div class=\"stat-label\">Score</div><div class=\"stat-value\">" + marksStr + "</div><div class=\"stat-change\">Evaluated</div></div>" +
+                "<div class=\"stat-card\"><div class=\"stat-label\">Submitted</div><div class=\"stat-value\">" + formatDate(result.submitted_at) + "</div><div class=\"stat-change\">On Time</div></div>";
+            // Student Comments
+            if (result.student_comments) {
+                document.getElementById("studentCommentsText").textContent = result.student_comments;
+                document.getElementById("studentCommentsSection").style.display = "block";
+            } else {
+                document.getElementById("studentCommentsSection").style.display = "none";
+            }
+
+            // File Links
+            var assignmentBtn = document.getElementById("viewAssignmentBtn");
+            if (result.assignment_file_url) {
+                assignmentBtn.href = result.assignment_file_url;
+                assignmentBtn.style.display = "inline-flex";
+            } else assignmentBtn.style.display = "none";
+
+            var submissionBtn = document.getElementById("viewSubmissionBtn");
+            if (result.submission_file_url) {
+                submissionBtn.href = result.submission_file_url;
+                submissionBtn.style.display = "inline-flex";
+            } else submissionBtn.style.display = "none";
+
+            var fb = result.feedback;
+            if (fb) {
+                document.getElementById("detailFeedbackText").textContent = fb;
+                document.getElementById("detailFeedback").style.display = "block";
+            } else document.getElementById("detailFeedback").style.display = "none";
+            document.getElementById("detailCard").style.display = "block";
+
+            // Highlight selected row
+            document.querySelectorAll("#resultsTableBody tr").forEach(function (tr) { tr.classList.remove("selected-row"); });
+            var targetRow = document.querySelector("#resultsTableBody tr[data-aid='" + result.assignment_id + "']");
+            if (targetRow) targetRow.classList.add("selected-row");
+        }
+
+        var params = new URLSearchParams(window.location.search);
+        var targetAssignmentId = params.get("assignment_id");
+
+        fetch(API_URL + "/student/" + encodeURIComponent(studentId) + "/results")
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                document.getElementById("resultsLoading").style.display = "none";
+                if (!data.success) {
+                    document.getElementById("resultsError").style.display = "block";
+                    document.getElementById("resultsError").textContent = data.message || "Failed to load.";
+                    return;
+                }
+                var list = data.results || [];
+                var tbody = document.getElementById("resultsTableBody");
+                tbody.innerHTML = "";
+                list.forEach(function (res, idx) {
+                    var marks = res.marks != null ? res.marks : res.score;
+                    var maxMarks = res.max_marks || 100;
+                    var marksStr = marks != null ? ("<strong style=\"color: var(--success);\">" + marks + "/" + maxMarks + "</strong>") : "—";
+                    tbody.insertAdjacentHTML("beforeend",
+                        "<tr data-aid=\"" + res.assignment_id + "\" style=\"cursor:pointer\"><td>" + (res.assignment_title || "—") + "</td><td>" + (res.subject || "—") + "</td><td>" + formatDate(res.submitted_at) + "</td><td>" + marksStr + "</td><td><button type=\"button\" class=\"btn btn-sm btn-primary\" data-idx=\"" + idx + "\">View Submission</button></td></tr>");
+                });
+                document.getElementById("resultsTableWrap").style.display = "block";
+                if (list.length === 0) {
+                    tbody.insertAdjacentHTML("beforeend", "<tr><td colspan=\"5\" class=\"text-center\">No evaluated results yet.</td></tr>");
+                } else {
+                    var initialItem = list[0];
+                    if (targetAssignmentId) {
+                        var found = list.find(function (i) { return String(i.assignment_id) === targetAssignmentId; });
+                        if (found) initialItem = found;
+                    }
+                    renderDetail(initialItem);
+
+                    tbody.querySelectorAll("tr[data-aid]").forEach(function (tr) {
+                        tr.addEventListener("click", function () {
+                            var idx = tr.querySelector("button").getAttribute("data-idx");
+                            renderDetail(list[parseInt(idx, 10)]);
+                        });
+                    });
+                }
+                hideLoader();
+            })
+            .catch(function () {
+                document.getElementById("resultsLoading").style.display = "none";
+                document.getElementById("resultsError").style.display = "block";
+                document.getElementById("resultsError").textContent = "Cannot connect to server. Is the backend running on port 5000?";
+                hideLoader();
+            });
+    })();
 </script>
+<script>function hideLoader() { var l = document.getElementById('page-loader'); if (l) setTimeout(function () { l.classList.add('hide'); }, 200); } window.addEventListener('load', function () { setTimeout(function () { var l = document.getElementById('page-loader'); if (l && !l.classList.contains('hide')) l.classList.add('hide'); }, 8000); });</script>
+
 </html>

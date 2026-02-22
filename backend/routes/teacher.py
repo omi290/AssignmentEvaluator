@@ -439,7 +439,7 @@ def get_submission_by_id(submission_id):
             """
             SELECT s.submission_id, s.student_id, s.assignment_id, s.submitted_at,
                    st.name AS student_name, a.title AS assignment_title,
-                   a.deadline::text AS assignment_deadline, s.file_url,
+                   a.deadline::text AS assignment_deadline, a.max_marks, s.file_url,
                    CASE WHEN s.marks IS NULL THEN 'submitted' ELSE 'evaluated' END AS status
             FROM submissions s
             JOIN assignments a ON a.assignment_id = s.assignment_id
@@ -464,6 +464,7 @@ def get_submission_by_id(submission_id):
             "student_name": r.get("student_name") or r.get("student_id"),
             "assignment_id": r.get("assignment_id"),
             "assignment_title": r.get("assignment_title") or "",
+            "max_marks": r.get("max_marks"),
             "status": r.get("status") or "submitted",
             "submitted_at": (r.get("submitted_at") or "").__str__(),
             "deadline": (r.get("assignment_deadline") or "").__str__(),

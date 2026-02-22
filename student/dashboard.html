@@ -9,6 +9,18 @@
 </head>
 
 <body>
+    <!-- Page Loader -->
+    <div id="page-loader">
+        <div class="loader-letter">
+            <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 15,100 C 20,60 35,20 50,10 C 65,20 80,60 85,100 M 25,65 Q 50,55 75,65" />
+            </svg>
+        </div>
+        <div class="loader-dots">
+            <span></span><span></span><span></span>
+        </div>
+    </div>
+
     <div class="portal-wrapper">
         <!-- Sidebar -->
         <aside class="sidebar">
@@ -227,16 +239,19 @@
                     cardEl.style.display = "block";
                 }
                 loadingEl.style.display = "none";
+                hideLoader();
             } catch (err) {
                 showZerosAndEmptyTable();
                 errorEl.style.display = "block";
                 errorEl.textContent = "Cannot connect to server. Make sure the backend is running on port 5000.";
                 loadingEl.style.display = "none";
+                hideLoader();
             }
         }
 
         document.addEventListener("DOMContentLoaded", loadDashboard);
     </script>
+    <script>function hideLoader() { var l = document.getElementById('page-loader'); if (l) setTimeout(function () { l.classList.add('hide'); }, 200); } window.addEventListener('load', function () { setTimeout(function () { var l = document.getElementById('page-loader'); if (l && !l.classList.contains('hide')) l.classList.add('hide'); }, 8000); });</script>
 </body>
 
 </html>

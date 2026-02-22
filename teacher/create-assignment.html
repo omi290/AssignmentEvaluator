@@ -9,6 +9,18 @@
 </head>
 
 <body>
+    <!-- Page Loader -->
+    <div id="page-loader">
+        <div class="loader-letter">
+            <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 15,100 C 20,60 35,20 50,10 C 65,20 80,60 85,100 M 25,65 Q 50,55 75,65" />
+            </svg>
+        </div>
+        <div class="loader-dots">
+            <span></span><span></span><span></span>
+        </div>
+    </div>
+
     <div class="portal-wrapper">
         <!-- Sidebar -->
         <aside class="sidebar">
@@ -216,6 +228,7 @@
             }
         })();
     </script>
+    <script>function hideLoader() { var l = document.getElementById('page-loader'); if (l) setTimeout(function () { l.classList.add('hide'); }, 200); } window.addEventListener('load', function () { hideLoader(); });</script>
 </body>
 
 </html>

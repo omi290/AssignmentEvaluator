@@ -9,6 +9,18 @@
 </head>
 
 <body>
+    <!-- Page Loader -->
+    <div id="page-loader">
+        <div class="loader-letter">
+            <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 15,100 C 20,60 35,20 50,10 C 65,20 80,60 85,100 M 25,65 Q 50,55 75,65" />
+            </svg>
+        </div>
+        <div class="loader-dots">
+            <span></span><span></span><span></span>
+        </div>
+    </div>
+
     <div class="portal-wrapper">
         <!-- Sidebar -->
         <aside class="sidebar">
@@ -42,7 +54,8 @@
                 <h2 class="navbar-title">Profile</h2>
                 <div class="navbar-right">
                     <div class="user-info">
-                        <span class="user-avatar" id="navAvatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary-blue); color: white; display: inline-flex; align-items: center; justify-content: center; font-weight: 600;">--</span>
+                        <span class="user-avatar" id="navAvatar"
+                            style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary-blue); color: white; display: inline-flex; align-items: center; justify-content: center; font-weight: 600;">--</span>
                         <span class="user-name" id="navUserName">Teacher</span>
                     </div>
                     <a href="../index.html" class="btn btn-sm btn-secondary">Logout</a>
@@ -60,7 +73,8 @@
                     <!-- Profile Card (dynamic) -->
                     <div class="card">
                         <div class="card-body text-center">
-                            <span id="profileAvatar" style="width: 120px; height: 120px; border-radius: 50%; background: var(--primary-blue); color: white; margin: 0 auto var(--spacing-md); display: inline-flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 600;">?</span>
+                            <span id="profileAvatar"
+                                style="width: 120px; height: 120px; border-radius: 50%; background: var(--primary-blue); color: white; margin: 0 auto var(--spacing-md); display: inline-flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 600;">?</span>
                             <h3 style="margin-bottom: var(--spacing-xs);" id="profileName">—</h3>
                             <p style="color: var(--text-medium); margin-bottom: var(--spacing-md);">Teacher</p>
                             <span class="badge badge-success">Active</span>
@@ -75,19 +89,26 @@
                         <div class="card-body">
                             <div style="display: grid; gap: var(--spacing-md);">
                                 <div>
-                                    <label style="font-weight: 600; color: var(--text-medium); display: block; margin-bottom: var(--spacing-xs);">Full Name</label>
+                                    <label
+                                        style="font-weight: 600; color: var(--text-medium); display: block; margin-bottom: var(--spacing-xs);">Full
+                                        Name</label>
                                     <p style="color: var(--text-dark); font-size: 1.125rem;" id="profileFullName">—</p>
                                 </div>
                                 <div>
-                                    <label style="font-weight: 600; color: var(--text-medium); display: block; margin-bottom: var(--spacing-xs);">Employee ID</label>
+                                    <label
+                                        style="font-weight: 600; color: var(--text-medium); display: block; margin-bottom: var(--spacing-xs);">Employee
+                                        ID</label>
                                     <p style="color: var(--text-dark); font-size: 1.125rem;" id="profileTeacherId">—</p>
                                 </div>
                                 <div>
-                                    <label style="font-weight: 600; color: var(--text-medium); display: block; margin-bottom: var(--spacing-xs);">Email Address</label>
+                                    <label
+                                        style="font-weight: 600; color: var(--text-medium); display: block; margin-bottom: var(--spacing-xs);">Email
+                                        Address</label>
                                     <p style="color: var(--text-dark); font-size: 1.125rem;" id="profileEmail">—</p>
                                 </div>
                             </div>
-                            <div class="mt-4" style="padding-top: var(--spacing-md); border-top: 1px solid var(--bg-grey);">
+                            <div class="mt-4"
+                                style="padding-top: var(--spacing-md); border-top: 1px solid var(--bg-grey);">
                                 <a href="../change-password.html" class="btn btn-primary">🔒 Change Password</a>
                             </div>
                         </div>
@@ -129,43 +150,45 @@
     </div>
 </body>
 <script>
-(function(){
-    var API_URL = "http://localhost:5000";
-    var teacherId = sessionStorage.getItem("userId");
-    var n = sessionStorage.getItem("userName") || teacherId || "Teacher";
-    document.getElementById("navUserName").textContent = n;
-    document.getElementById("navAvatar").textContent = (n && n.charAt(0).toUpperCase()) || "?";
-    document.getElementById("profileName").textContent = n;
-    document.getElementById("profileFullName").textContent = n;
-    document.getElementById("profileTeacherId").textContent = teacherId || "—";
-    document.getElementById("profileAvatar").textContent = (n && n.charAt(0).toUpperCase()) || "?";
-    if (teacherId) {
-        fetch(API_URL + "/teacher/" + encodeURIComponent(teacherId) + "/profile")
-            .then(function(r){ return r.json(); })
-            .then(function(d){
-                if (d.success) {
-                    if (d.name) {
-                        document.getElementById("navUserName").textContent = d.name;
-                        document.getElementById("profileName").textContent = d.name;
-                        document.getElementById("profileFullName").textContent = d.name;
-                        document.getElementById("profileAvatar").textContent = d.name.charAt(0).toUpperCase();
+    (function () {
+        var API_URL = "http://localhost:5000";
+        var teacherId = sessionStorage.getItem("userId");
+        var n = sessionStorage.getItem("userName") || teacherId || "Teacher";
+        document.getElementById("navUserName").textContent = n;
+        document.getElementById("navAvatar").textContent = (n && n.charAt(0).toUpperCase()) || "?";
+        document.getElementById("profileName").textContent = n;
+        document.getElementById("profileFullName").textContent = n;
+        document.getElementById("profileTeacherId").textContent = teacherId || "—";
+        document.getElementById("profileAvatar").textContent = (n && n.charAt(0).toUpperCase()) || "?";
+        if (teacherId) {
+            fetch(API_URL + "/teacher/" + encodeURIComponent(teacherId) + "/profile")
+                .then(function (r) { return r.json(); })
+                .then(function (d) {
+                    if (d.success) {
+                        if (d.name) {
+                            document.getElementById("navUserName").textContent = d.name;
+                            document.getElementById("profileName").textContent = d.name;
+                            document.getElementById("profileFullName").textContent = d.name;
+                            document.getElementById("profileAvatar").textContent = d.name.charAt(0).toUpperCase();
+                        }
+                        document.getElementById("profileEmail").textContent = d.email != null ? d.email : "—";
                     }
-                    document.getElementById("profileEmail").textContent = d.email != null ? d.email : "—";
-                }
-            })
-            .catch(function(){});
-        fetch(API_URL + "/teacher/" + encodeURIComponent(teacherId) + "/dashboard")
-            .then(function(r){ return r.json(); })
-            .then(function(d){
-                if (d.success) {
-                    document.getElementById("statAssignments").textContent = d.total_assignments != null ? d.total_assignments : 0;
-                    document.getElementById("statSubmissions").textContent = d.submissions_received != null ? d.submissions_received : 0;
-                    document.getElementById("statPending").textContent = d.pending_evaluation != null ? d.pending_evaluation : 0;
-                    document.getElementById("statEvaluated").textContent = d.evaluated_count != null ? d.evaluated_count : 0;
-                }
-            })
-            .catch(function(){});
-    }
-})();
+                })
+                .catch(function () { });
+            fetch(API_URL + "/teacher/" + encodeURIComponent(teacherId) + "/dashboard")
+                .then(function (r) { return r.json(); })
+                .then(function (d) {
+                    if (d.success) {
+                        document.getElementById("statAssignments").textContent = d.total_assignments != null ? d.total_assignments : 0;
+                        document.getElementById("statSubmissions").textContent = d.submissions_received != null ? d.submissions_received : 0;
+                        document.getElementById("statPending").textContent = d.pending_evaluation != null ? d.pending_evaluation : 0;
+                        document.getElementById("statEvaluated").textContent = d.evaluated_count != null ? d.evaluated_count : 0;
+                    }
+                })
+                .catch(function () { });
+        }
+    })();
 </script>
+<script>function hideLoader() { var l = document.getElementById('page-loader'); if (l) setTimeout(function () { l.classList.add('hide'); }, 200); } window.addEventListener('load', function () { hideLoader(); });</script>
+
 </html>

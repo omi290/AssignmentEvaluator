@@ -9,6 +9,18 @@
 </head>
 
 <body>
+    <!-- Page Loader -->
+    <div id="page-loader">
+        <div class="loader-letter">
+            <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 15,100 C 20,60 35,20 50,10 C 65,20 80,60 85,100 M 25,65 Q 50,55 75,65" />
+            </svg>
+        </div>
+        <div class="loader-dots">
+            <span></span><span></span><span></span>
+        </div>
+    </div>
+
     <div class="portal-wrapper">
         <!-- Sidebar -->
         <aside class="sidebar">
@@ -42,7 +54,8 @@
                 <h2 class="navbar-title">Profile</h2>
                 <div class="navbar-right">
                     <div class="user-info">
-                        <span class="user-avatar" id="navAvatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary-blue); color: white; display: inline-flex; align-items: center; justify-content: center; font-weight: 600;">--</span>
+                        <span class="user-avatar" id="navAvatar"
+                            style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary-blue); color: white; display: inline-flex; align-items: center; justify-content: center; font-weight: 600;">--</span>
                         <span class="user-name" id="navUserName">Student</span>
                     </div>
                     <a href="../index.html" class="btn btn-sm btn-secondary">Logout</a>
@@ -60,7 +73,8 @@
                     <!-- Profile Card -->
                     <div class="card">
                         <div class="card-body text-center">
-                            <span id="profileAvatar" style="width: 120px; height: 120px; border-radius: 50%; background: var(--primary-blue); color: white; margin: 0 auto var(--spacing-md); display: inline-flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 600;">?</span>
+                            <span id="profileAvatar"
+                                style="width: 120px; height: 120px; border-radius: 50%; background: var(--primary-blue); color: white; margin: 0 auto var(--spacing-md); display: inline-flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 600;">?</span>
                             <h3 style="margin-bottom: var(--spacing-xs);" id="profileName">—</h3>
                             <p style="color: var(--text-medium); margin-bottom: var(--spacing-md);">Student</p>
                             <span class="badge badge-success">Active</span>
@@ -192,7 +206,7 @@
                             document.getElementById("profileEmail").textContent = d.email != null ? d.email : "—";
                         }
                     })
-                    .catch(function () {});
+                    .catch(function () { });
                 fetch("http://localhost:5000/student/" + encodeURIComponent(id) + "/dashboard")
                     .then(function (r) { return r.json(); })
                     .then(function (d) {
@@ -203,10 +217,11 @@
                             document.getElementById("statPending").textContent = d.pending_count != null ? d.pending_count : 0;
                         }
                     })
-                    .catch(function () {});
+                    .catch(function () { });
             }
         })();
     </script>
+    <script>function hideLoader() { var l = document.getElementById('page-loader'); if (l) setTimeout(function () { l.classList.add('hide'); }, 200); } window.addEventListener('load', function () { hideLoader(); });</script>
 </body>
 
 </html>
