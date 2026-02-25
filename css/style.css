@@ -566,7 +566,7 @@ select {
   background: var(--bg-white);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
-  overflow: hidden;
+  overflow: visible;
 }
 
 .table {
@@ -958,7 +958,6 @@ select {
   min-width: 150px;
   z-index: 1000;
   display: none;
-  overflow: hidden;
 }
 
 .dropdown-menu.show {
@@ -1058,13 +1057,13 @@ select {
   position: fixed;
   inset: 0;
   z-index: 9999;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #ffffff;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 1.5rem;
-  transition: opacity 0.5s ease, visibility 0.5s ease;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
 }
 
 #page-loader.hide {
@@ -1078,12 +1077,12 @@ select {
   width: 130px;
   height: 130px;
   overflow: visible;
-  filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.5));
+  filter: drop-shadow(0 0 12px rgba(0, 0, 0, 0.15));
 }
 
 #page-loader .loader-letter path {
   fill: none;
-  stroke: #ffffff;
+  stroke: #111111;
   stroke-width: 5;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -1116,7 +1115,7 @@ select {
 
 #page-loader .loader-text {
   font-family: 'Inter', sans-serif;
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(0, 0, 0, 0.7);
   font-size: 0.9rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -1145,7 +1144,7 @@ select {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(0, 0, 0, 0.5);
   animation: bounce-dot 1.2s ease-in-out infinite;
 }
 
