@@ -1,7 +1,4 @@
-# ============================================================
-# app.py — Flask application entry point
-# Assignment Evaluator — Phase-2 Backend
-# ============================================================
+# app.py — Flask application entry point, Assignment Evaluator Phase-2 Backend
 
 from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
@@ -13,7 +10,7 @@ from routes.auth import auth_bp
 from routes.student import student_bp
 from routes.teacher import teacher_bp
 
-# ── Create Flask app ──────────────────────────────────────────
+# Create Flask app
 app = Flask(__name__)
 app.config["SECRET_KEY"] = SECRET_KEY
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
@@ -21,19 +18,18 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 # Ensure upload directory exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# ── Enable CORS so the frontend (HTML/JS) can call this API ──
-# Update the origins list if your frontend is hosted elsewhere
+# Enable CORS so the frontend can call this API
 CORS(app, resources={r"/*": {"origins": "*"}})
 
-# ── Register Blueprints ───────────────────────────────────────
+# Register Blueprints
 app.register_blueprint(auth_bp)
 app.register_blueprint(student_bp)
 app.register_blueprint(teacher_bp)
 
-# ── Health-check endpoint ─────────────────────────────────────
+# Health-check endpoint
 @app.route("/", methods=["GET"])
 def index():
-    """GET / — confirms the backend is running."""
+    # GET / — confirms the backend is running
     return jsonify({
         "status":  "ok",
         "message": "Assignment Evaluator Backend is running.",
@@ -42,8 +38,7 @@ def index():
     }), 200
 
 
-# ── Run the app ───────────────────────────────────────────────
+# Run the app
 if __name__ == "__main__":
-    # debug=True gives auto-reload during development.
-    # Set debug=False before deploying to production.
+    # debug=True for auto-reload; set False for production
     app.run(debug=True, host="0.0.0.0", port=5000)

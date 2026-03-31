@@ -1,6 +1,4 @@
-# ============================================================
 # routes/auth.py — Login endpoint
-# ============================================================
 
 from flask import Blueprint, request, jsonify
 import psycopg2.extras
@@ -36,7 +34,7 @@ def login():
     if role == "student":
         table = "students"
         id_column = "student_id"
-        name_column = "name"  # use full_name if your schema has that instead
+        name_column = "name"
     else:
         table = "teachers"
         id_column = "teacher_id"
@@ -46,7 +44,7 @@ def login():
         conn = get_db_connection()
         cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
-        # Select id and name so we can return them to frontend
+        # Select id and name to return to frontend
         query = f"""
             SELECT {id_column}, {name_column}
             FROM {table}
@@ -65,7 +63,7 @@ def login():
         }), 500
 
     if user:
-        # Support both "name" and "full_name" column names
+        # Support both name and full_name column names
         name = user.get("name") or user.get("full_name") or user_id
         return jsonify({
             "success": True,
