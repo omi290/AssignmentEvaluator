@@ -23,6 +23,9 @@ UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "upload
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
+# OpenAI API key for AI evaluation (optional — system falls back to heuristic if missing)
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+
 # Validate that required vars are present
 REQUIRED_VARS = [
     "SUPABASE_DB_HOST",

@@ -123,13 +123,22 @@
                                 <h3 class="card-title">Evaluation</h3>
                             </div>
                             <div class="card-body">
-                                <!-- AI Detection -->
-                                <div class="alert alert-success mb-3">
+                                <!-- AI Action Button -->
+                                <button type="button" id="runAiBtn" class="btn btn-primary" style="width: 100%; margin-bottom: 1rem; font-weight: bold;">
+                                    🤖 Run AI Evaluation
+                                </button>
+                                
+                                <div id="aiLoadingIndicator" style="display: none; text-align: center; margin-bottom: 1rem; color: var(--primary-blue);">
+                                    ⏳ AI is evaluating the submission... please wait.
+                                </div>
+
+                                <!-- AI Detection Panel -->
+                                <div id="aiDetectionPanel" class="alert alert-info mb-3" style="display: none;">
                                     <span>🤖</span>
                                     <div>
-                                        <strong>AI Detection Result:</strong> Clean (2% probability)
+                                        <strong>AI Detection Result:</strong> <span id="aiDetectionText">0</span>
                                         <br>
-                                        <small>This submission appears to be original work</small>
+                                        <small id="aiDetectionSubtext">0</small>
                                     </div>
                                 </div>
 
@@ -232,9 +241,8 @@
                 if (s.max_marks) {
                     document.getElementById("maxMarksLabel").textContent = s.max_marks;
                     document.getElementById("evalMarks").max = s.max_marks;
-                    // Proportional AI suggested marks for demo (e.g. 92% of max)
-                    var suggested = Math.round(s.max_marks * 0.92);
-                    document.getElementById("aiSuggestedMarks").textContent = suggested + "/" + s.max_marks;
+                    // Proportional AI suggested marks (initially empty)
+                    document.getElementById("aiSuggestedMarks").textContent = "—/" + s.max_marks;
                 }
 
                 document.getElementById("evaluateContent").style.display = "block";
@@ -246,6 +254,74 @@
                 document.getElementById("evaluateError").textContent = "Cannot connect to server.";
                 hideLoader();
             });
+
+        // AI Evaluation Logic
+        var runAiBtn = document.getElementById("runAiBtn");
+        var aiLoadingIndicator = document.getElementById("aiLoadingIndicator");
+        var aiDetectionPanel = document.getElementById("aiDetectionPanel");
+        var aiDetectionText = document.getElementById("aiDetectionText");
+        var aiDetectionSubtext = document.getElementById("aiDetectionSubtext");
+
+        if (runAiBtn) {
+            runAiBtn.onclick = function() {
+                runAiBtn.disabled = true;
+                runAiBtn.textContent = "Running AI Evaluation...";
+                aiLoadingIndicator.style.display = "block";
+                document.getElementById("evalAlert").style.display = "none";
+
+                fetch(API_URL + "/evaluate/" + submissionId, {
+                    method: "POST"
+                })
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    runAiBtn.disabled = false;
+                    runAiBtn.textContent = "🤖 Re-run AI Evaluation";
+                    aiLoadingIndicator.style.display = "none";
+
+                    if (data.success && data.evaluation) {
+                        var ev = data.evaluation;
+                        
+                        // Populate UI with AI results
+                        document.getElementById("aiSuggestedMarks").textContent = ev.score + "/" + ev.max_marks;
+                        document.getElementById("evalMarks").value = ev.score;
+                        document.getElementById("evalFeedback").value = ev.feedback;
+                        
+                        // Show AI Detection info
+                        aiDetectionPanel.style.display = "block";
+                        if (ev.ai_probability > 50) {
+                            aiDetectionPanel.className = "alert alert-warning mb-3";
+                            aiDetectionText.textContent = "Flagged (" + ev.ai_probability + "% probability)";
+                            aiDetectionSubtext.textContent = "This submission exhibits characteristics of AI-generated text.";
+                        } else {
+                            aiDetectionPanel.className = "alert alert-success mb-3";
+                            aiDetectionText.textContent = "Clean (" + ev.ai_probability + "% probability)";
+                            aiDetectionSubtext.textContent = "This submission appears to be original work.";
+                        }
+                        
+                        // Show success alert
+                        var alertEl = document.getElementById("evalAlert");
+                        alertEl.textContent = "AI Evaluation completed! You can review and edit the suggestions before submitting.";
+                        alertEl.className = "alert alert-info";
+                        alertEl.style.display = "block";
+                        
+                    } else {
+                        var alertEl = document.getElementById("evalAlert");
+                        alertEl.textContent = data.message || "AI Evaluation failed.";
+                        alertEl.className = "alert alert-danger";
+                        alertEl.style.display = "block";
+                    }
+                })
+                .catch(function(e) {
+                    runAiBtn.disabled = false;
+                    runAiBtn.textContent = "🤖 Run AI Evaluation";
+                    aiLoadingIndicator.style.display = "none";
+                    var alertEl = document.getElementById("evalAlert");
+                    alertEl.textContent = "Cannot connect to server for AI evaluation.";
+                    alertEl.className = "alert alert-danger";
+                    alertEl.style.display = "block";
+                });
+            };
+        }
 
         // Handle evaluation submission
         var submitBtn = document.getElementById("submitEvalBtn");

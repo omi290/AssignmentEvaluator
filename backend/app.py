@@ -9,6 +9,7 @@ import os
 from routes.auth import auth_bp
 from routes.student import student_bp
 from routes.teacher import teacher_bp
+from routes.ai_routes import ai_bp
 
 # Create Flask app
 app = Flask(__name__)
@@ -25,6 +26,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 app.register_blueprint(auth_bp)
 app.register_blueprint(student_bp)
 app.register_blueprint(teacher_bp)
+app.register_blueprint(ai_bp)
 
 # Health-check endpoint
 @app.route("/", methods=["GET"])
