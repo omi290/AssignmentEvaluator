@@ -132,6 +132,17 @@
                                     ⏳ AI is evaluating the submission... please wait.
                                 </div>
 
+                                <!-- Relevance Check Panel -->
+                                <div id="relevancePanel" class="alert mb-3" style="display: none; border-left: 4px solid; padding: 1rem;">
+                                    <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+                                        <span id="relevanceIcon" style="font-size: 1.5rem;">📋</span>
+                                        <div>
+                                            <strong id="relevanceTitle">Relevance Check</strong>
+                                            <p id="relevanceText" style="margin: 0.25rem 0 0 0; font-size: 0.9rem;"></p>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <!-- AI Detection Panel -->
                                 <div id="aiDetectionPanel" class="alert alert-info mb-3" style="display: none;">
                                     <span>🤖</span>
@@ -281,6 +292,31 @@
                     if (data.success && data.evaluation) {
                         var ev = data.evaluation;
                         
+                        // ── Relevance Check Panel ──
+                        var relPanel = document.getElementById("relevancePanel");
+                        var relIcon = document.getElementById("relevanceIcon");
+                        var relTitle = document.getElementById("relevanceTitle");
+                        var relText = document.getElementById("relevanceText");
+                        relPanel.style.display = "block";
+
+                        if (ev.is_relevant === false) {
+                            // IRRELEVANT — big red warning
+                            relPanel.className = "alert alert-danger mb-3";
+                            relPanel.style.borderLeftColor = "#e74c3c";
+                            relPanel.style.background = "rgba(231, 76, 60, 0.08)";
+                            relIcon.textContent = "⚠️";
+                            relTitle.textContent = "❌ Irrelevant Submission Detected";
+                            relText.textContent = ev.relevance_reason || "The student's submission does not match the assignment. They may have uploaded notes, the question paper, or unrelated content.";
+                        } else {
+                            // RELEVANT — green check
+                            relPanel.className = "alert alert-success mb-3";
+                            relPanel.style.borderLeftColor = "#27ae60";
+                            relPanel.style.background = "rgba(39, 174, 96, 0.08)";
+                            relIcon.textContent = "✅";
+                            relTitle.textContent = "Submission Matches Assignment";
+                            relText.textContent = ev.relevance_reason || "The submission appears to address the assignment topic.";
+                        }
+
                         // Populate UI with AI results
                         document.getElementById("aiSuggestedMarks").textContent = ev.score + "/" + ev.max_marks;
                         document.getElementById("evalMarks").value = ev.score;
@@ -300,8 +336,13 @@
                         
                         // Show success alert
                         var alertEl = document.getElementById("evalAlert");
-                        alertEl.textContent = "AI Evaluation completed! You can review and edit the suggestions before submitting.";
-                        alertEl.className = "alert alert-info";
+                        if (ev.is_relevant === false) {
+                            alertEl.textContent = "⚠️ Submission flagged as IRRELEVANT — score set to 0. Review the reason above.";
+                            alertEl.className = "alert alert-danger";
+                        } else {
+                            alertEl.textContent = "AI Evaluation completed! You can review and edit the suggestions before submitting.";
+                            alertEl.className = "alert alert-info";
+                        }
                         alertEl.style.display = "block";
                         
                     } else {
