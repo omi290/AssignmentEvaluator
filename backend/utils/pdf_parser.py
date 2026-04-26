@@ -12,6 +12,13 @@ import os
 import requests
 
 
+def _sanitize_text(text):
+    """Remove NUL (0x00) characters that break PostgreSQL string literals."""
+    if not text:
+        return text
+    return text.replace("\x00", "")
+
+
 # ── OCR availability check ──────────────────────────────────
 
 _OCR_AVAILABLE = False
@@ -70,7 +77,7 @@ def extract_text(file_url):
         or url_lower.endswith((".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".webp"))
     )
     if is_image:
-        return _extract_from_image(content)
+        return _sanitize_text(_extract_from_image(content))
 
     # ── Route 2: PDF files → PyPDF2 then OCR fallback ──
     is_pdf = (
@@ -79,13 +86,13 @@ def extract_text(file_url):
         or content[:5] == b"%PDF-"
     )
     if is_pdf:
-        return _extract_from_pdf(content)
+        return _sanitize_text(_extract_from_pdf(content))
 
     # ── Route 3: Plain text ──
     try:
-        return content.decode("utf-8", errors="replace")
+        return _sanitize_text(content.decode("utf-8", errors="replace"))
     except Exception:
-        return content.decode("latin-1", errors="replace")
+        return _sanitize_text(content.decode("latin-1", errors="replace"))
 
 
 # ── PDF extraction (digital + OCR fallback) ─────────────────

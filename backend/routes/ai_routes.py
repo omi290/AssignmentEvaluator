@@ -181,6 +181,15 @@ def ai_evaluate(submission_id):
     plagiarism_matches_json = json.dumps(plagiarism_result.get("matches", []))
 
     # --- Step 6: Update the submissions table ---
+    # Sanitize all strings to remove NUL (0x00) bytes that PostgreSQL rejects
+    def _strip_nul(s):
+        return s.replace("\x00", "") if isinstance(s, str) else s
+
+    text = _strip_nul(text)
+    feedback = _strip_nul(feedback)
+    relevance_reason = _strip_nul(relevance_reason)
+    plagiarism_matches_json = _strip_nul(plagiarism_matches_json)
+
     try:
         cur.execute(
             """
