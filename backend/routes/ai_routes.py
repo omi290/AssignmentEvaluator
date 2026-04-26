@@ -1,13 +1,16 @@
 # ============================================================
-# routes/ai_routes.py — AI Evaluation API (Phase-4)
-# Now fetches assignment context for relevance validation
+# routes/ai_routes.py — AI Evaluation API (Phase-8)
+# Full pipeline: text extraction → relevance check → AI scoring
+#                → plagiarism detection → save results
 # ============================================================
 
+import json
 from flask import Blueprint, jsonify
 import psycopg2.extras
 from db import get_db_connection
 from utils.pdf_parser import extract_text
 from ai.evaluator import evaluate_submission
+from ai.plagiarism import check_plagiarism
 
 ai_bp = Blueprint("ai", __name__)
 
@@ -38,18 +41,48 @@ def _build_assignment_context(title, description, assignment_file_url):
     return "\n\n".join(parts) if parts else ""
 
 
+def _fetch_other_submissions(cur, assignment_id, exclude_submission_id):
+    """
+    Fetch extracted_text for all OTHER submissions of the same assignment.
+    Only returns submissions that have stored text.
+    """
+    cur.execute(
+        """
+        SELECT submission_id, student_id, extracted_text
+        FROM submissions
+        WHERE assignment_id = (
+            SELECT assignment_id FROM submissions WHERE submission_id = %s
+        )
+        AND submission_id != %s
+        AND extracted_text IS NOT NULL
+        AND extracted_text != ''
+        """,
+        (exclude_submission_id, exclude_submission_id),
+    )
+    rows = cur.fetchall() or []
+    return [
+        {
+            "submission_id": r["submission_id"],
+            "student_id": r["student_id"],
+            "text": r["extracted_text"],
+        }
+        for r in rows
+    ]
+
+
 @ai_bp.route("/evaluate/<int:submission_id>", methods=["POST"])
 def ai_evaluate(submission_id):
     """
     POST /evaluate/<submission_id>
 
-    Flow:
+    Full evaluation pipeline:
       1. Fetch submission file_url AND assignment context from DB
-      2. Extract text from the student's submitted file
-      3. Extract text from the assignment's question paper (if exists)
-      4. Run AI evaluation with both texts for relevance + scoring
-      5. Update submissions table with marks, feedback, ai_probability, relevance
-      6. Return evaluation results as JSON
+      2. Extract text from the student's submitted file (with OCR fallback)
+      3. Build assignment context for relevance check
+      4. Run AI evaluation (scoring + relevance + AI detection)
+      5. Run peer plagiarism check against other submissions
+      6. Save all results to the submissions table
+      7. Return evaluation results as JSON
     """
     # --- Step 1: Fetch submission + assignment details ---
     try:
@@ -57,7 +90,7 @@ def ai_evaluate(submission_id):
         cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         cur.execute(
             """
-            SELECT s.submission_id, s.file_url,
+            SELECT s.submission_id, s.file_url, s.assignment_id,
                    a.max_marks,
                    a.title AS assignment_title,
                    a.description AS assignment_description,
@@ -79,6 +112,7 @@ def ai_evaluate(submission_id):
 
     file_url = row.get("file_url") or ""
     max_marks = int(row.get("max_marks") or 100)
+    assignment_id = row.get("assignment_id")
     assignment_title = row.get("assignment_title") or ""
     assignment_description = row.get("assignment_description") or ""
     assignment_file_url = row.get("assignment_file_url") or ""
@@ -133,17 +167,38 @@ def ai_evaluate(submission_id):
     relevance_reason = result.get("relevance_reason", "")
     method = result.get("method", "unknown")
 
-    # --- Step 5: Update the submissions table ---
+    # --- Step 5: Run plagiarism check against other submissions ---
+    plagiarism_result = {"is_plagiarized": False, "max_similarity": 0.0, "matches": []}
+    try:
+        other_submissions = _fetch_other_submissions(cur, assignment_id, submission_id)
+        if other_submissions:
+            plagiarism_result = check_plagiarism(text, other_submissions)
+    except Exception as e:
+        print(f"[ai_routes.py] Plagiarism check error (non-fatal): {e}")
+
+    plagiarism_flag = plagiarism_result.get("is_plagiarized", False)
+    plagiarism_score = plagiarism_result.get("max_similarity", 0.0)
+    plagiarism_matches_json = json.dumps(plagiarism_result.get("matches", []))
+
+    # --- Step 6: Update the submissions table ---
     try:
         cur.execute(
             """
             UPDATE submissions
             SET marks = %s, feedback = %s, ai_probability = %s,
-                is_relevant = %s, relevance_reason = %s
+                is_relevant = %s, relevance_reason = %s,
+                extracted_text = %s,
+                plagiarism_flag = %s, plagiarism_score = %s, plagiarism_matches = %s
             WHERE submission_id = %s
             RETURNING submission_id
             """,
-            (score, feedback, ai_probability, is_relevant, relevance_reason, submission_id),
+            (
+                score, feedback, ai_probability,
+                is_relevant, relevance_reason,
+                text[:10000],  # store up to 10k chars for future comparisons
+                plagiarism_flag, plagiarism_score, plagiarism_matches_json,
+                submission_id,
+            ),
         )
         updated = cur.fetchone()
         conn.commit()
@@ -155,7 +210,7 @@ def ai_evaluate(submission_id):
     if not updated:
         return jsonify({"success": False, "message": "Failed to update submission."}), 500
 
-    # --- Step 6: Return results ---
+    # --- Step 7: Return results ---
     return jsonify({
         "success": True,
         "message": "AI evaluation completed successfully.",
@@ -168,5 +223,10 @@ def ai_evaluate(submission_id):
             "is_relevant": is_relevant,
             "relevance_reason": relevance_reason,
             "method": method,
+        },
+        "plagiarism": {
+            "is_plagiarized": plagiarism_flag,
+            "max_similarity": plagiarism_score,
+            "matches": plagiarism_result.get("matches", []),
         },
     }), 200

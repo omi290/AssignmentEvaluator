@@ -213,6 +213,7 @@ def get_student_results(student_id):
             """
             SELECT s.submission_id, s.assignment_id, s.submitted_at, s.marks, s.feedback,
                    s.file_url AS submission_file_url, s.student_comments,
+                   s.ai_probability, s.is_relevant, s.relevance_reason,
                    a.title AS assignment_title, a.max_marks, a.file_url AS assignment_file_url
             FROM submissions s
             JOIN assignments a ON a.assignment_id = s.assignment_id
@@ -241,6 +242,9 @@ def get_student_results(student_id):
             "student_comments": r.get("student_comments") or "",
             "score": r.get("score"),
             "feedback": r.get("feedback") or "",
+            "ai_probability": r.get("ai_probability"),
+            "is_relevant": r.get("is_relevant"),
+            "relevance_reason": r.get("relevance_reason") or "",
         })
     return jsonify({"success": True, "results": results}), 200
 

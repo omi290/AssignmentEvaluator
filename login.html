@@ -344,10 +344,13 @@
                     // ✅ Login successful
                     showAlert(data.message, "success");
 
-                    // Store user details from backend (name, id, role) for dashboard/navbar
+                    // Store user details from backend (name, id, role, token) for dashboard/navbar
                     sessionStorage.setItem("userId", data.id);
                     sessionStorage.setItem("userRole", data.role);
                     sessionStorage.setItem("userName", data.name || data.id);
+                    if (data.token) {
+                        sessionStorage.setItem("authToken", data.token);
+                    }
 
                     // Redirect based on role after short delay
                     setTimeout(() => {

@@ -93,6 +93,8 @@
                                     <option value="">All Status</option>
                                     <option value="pending">Pending</option>
                                     <option value="evaluated">Evaluated</option>
+                                    <option value="irrelevant">⚠️ Irrelevant</option>
+                                    <option value="plagiarized">🚨 Plagiarized</option>
                                 </select>
                             </div>
                         </div>
@@ -109,6 +111,8 @@
                                 <th>Assignment</th>
                                 <th>Submission Time</th>
                                 <th>Status</th>
+                                <th>Relevance</th>
+                                <th>Plagiarism</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -142,18 +146,29 @@
             if (String(status).toLowerCase().indexOf("evaluated") !== -1) return '<span class="badge badge-info">Evaluated</span>';
             return '<span class="badge badge-warning">Pending</span>';
         }
+        function relevanceBadge(s) {
+            if (s.is_relevant === false) return '<span class="badge badge-danger" title="' + (s.relevance_reason || 'Irrelevant') + '">⚠️ Irrelevant</span>';
+            if (s.is_relevant === true) return '<span class="badge badge-success">✅ Relevant</span>';
+            return '<span class="badge badge-secondary">—</span>';
+        }
+        function plagiarismBadge(s) {
+            if (s.plagiarism_flag === true) return '<span class="badge badge-danger" title="' + (s.plagiarism_score || 0) + '% match">🚨 ' + (s.plagiarism_score || 0) + '%</span>';
+            if (s.plagiarism_flag === false) return '<span class="badge badge-success">✅ Clean</span>';
+            return '<span class="badge badge-secondary">—</span>';
+        }
         function renderTable(list) {
             var tbody = document.getElementById("submissionsTableBody");
             tbody.innerHTML = "";
             list.forEach(function (s) {
                 var isEval = s.status && String(s.status).toLowerCase().indexOf("evaluated") !== -1;
                 var action = isEval
-                    ? '<button type="button" class="btn btn-sm btn-secondary">View</button>'
+                    ? '<a href="evaluate.html?submission_id=' + (s.submission_id || s.id) + '&assignment_id=' + (s.assignment_id || "") + '" class="btn btn-sm btn-secondary">View</a>'
                     : '<a href="evaluate.html?submission_id=' + (s.submission_id || s.id) + '&assignment_id=' + (s.assignment_id || "") + '" class="btn btn-sm btn-primary">Evaluate</a>';
+                var rowClass = s.is_relevant === false || s.plagiarism_flag === true ? ' style="background: rgba(239,68,68,0.04);"' : '';
                 tbody.insertAdjacentHTML("beforeend",
-                    "<tr><td>" + (s.student_id || "—") + "</td><td>" + (s.student_name || s.student_id || "—") + "</td><td>" + (s.assignment_title || "—") + "</td><td>" + formatDate(s.submitted_at) + "</td><td>" + statusBadge(s.status) + "</td><td>" + action + "</td></tr>");
+                    "<tr" + rowClass + "><td>" + (s.student_id || "—") + "</td><td>" + (s.student_name || s.student_id || "—") + "</td><td>" + (s.assignment_title || "—") + "</td><td>" + formatDate(s.submitted_at) + "</td><td>" + statusBadge(s.status) + "</td><td>" + relevanceBadge(s) + "</td><td>" + plagiarismBadge(s) + "</td><td>" + action + "</td></tr>");
             });
-            if (list.length === 0) tbody.insertAdjacentHTML("beforeend", "<tr><td colspan=\"6\" class=\"text-center\">No submissions yet.</td></tr>");
+            if (list.length === 0) tbody.insertAdjacentHTML("beforeend", "<tr><td colspan=\"8\" class=\"text-center\">No submissions yet.</td></tr>");
         }
         fetch(API_URL + "/teacher/" + encodeURIComponent(teacherId) + "/submissions")
             .then(function (r) { return r.json(); })
@@ -178,8 +193,10 @@
                     var statusVal = document.getElementById("filterStatus").value;
                     var filtered = list.filter(function (s) {
                         if (assignId && String(s.assignment_id) !== String(assignId)) return false;
-                        if (statusVal === "pending" && (!s.status || String(s.status).toLowerCase().indexOf("evaluated") !== -1)) return false;
+                        if (statusVal === "pending" && (s.status && String(s.status).toLowerCase().indexOf("evaluated") !== -1)) return false;
                         if (statusVal === "evaluated" && (!s.status || String(s.status).toLowerCase().indexOf("evaluated") === -1)) return false;
+                        if (statusVal === "irrelevant" && s.is_relevant !== false) return false;
+                        if (statusVal === "plagiarized" && s.plagiarism_flag !== true) return false;
                         return true;
                     });
                     renderTable(filtered);

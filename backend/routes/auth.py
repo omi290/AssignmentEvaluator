@@ -1,8 +1,9 @@
-# routes/auth.py — Login endpoint
+# routes/auth.py — Login endpoint with JWT token generation
 
 from flask import Blueprint, request, jsonify
 import psycopg2.extras
 from db import get_db_connection
+from utils.auth_middleware import generate_token
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -65,15 +66,20 @@ def login():
     if user:
         # Support both name and full_name column names
         name = user.get("name") or user.get("full_name") or user_id
+
+        # Generate JWT token
+        token = generate_token(user_id=user_id, role=role, name=name)
+
         return jsonify({
             "success": True,
             "message": f"Login successful as {role}",
             "role": role,
             "id": user_id,
-            "name": name
+            "name": name,
+            "token": token,
         }), 200
 
     return jsonify({
         "success": False,
         "message": "Invalid ID or password."
-    }), 401
+    }), 401

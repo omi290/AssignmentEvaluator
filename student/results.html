@@ -150,9 +150,32 @@
             var marks = result.marks != null ? result.marks : result.score;
             var maxMarks = result.max_marks || 100;
             var marksStr = marks != null ? (marks + "/" + maxMarks) : "—";
-            document.getElementById("detailStats").innerHTML =
+
+            // Build stat cards
+            var statsHtml =
                 "<div class=\"stat-card success\"><div class=\"stat-label\">Score</div><div class=\"stat-value\">" + marksStr + "</div><div class=\"stat-change\">Evaluated</div></div>" +
                 "<div class=\"stat-card\"><div class=\"stat-label\">Submitted</div><div class=\"stat-value\">" + formatDate(result.submitted_at) + "</div><div class=\"stat-change\">On Time</div></div>";
+
+            // AI Detection stat card
+            if (result.ai_probability != null) {
+                var aiColor = result.ai_probability > 50 ? "warning" : "success";
+                var aiLabel = result.ai_probability > 50 ? "Flagged" : "Clean";
+                statsHtml += "<div class=\"stat-card " + aiColor + "\"><div class=\"stat-label\">AI Detection</div><div class=\"stat-value\">" + result.ai_probability + "%</div><div class=\"stat-change\">" + aiLabel + "</div></div>";
+            }
+
+            document.getElementById("detailStats").innerHTML = statsHtml;
+
+            // Relevance alert
+            var relevanceEl = document.getElementById("detailRelevance");
+            if (relevanceEl) relevanceEl.remove();
+            if (result.is_relevant === false) {
+                var alertHtml = '<div id="detailRelevance" class="alert alert-danger mb-3" style="border-left: 4px solid #e74c3c; background: rgba(231,76,60,0.08);"><span style="font-size:1.3rem;">⚠️</span><div><strong>Submission Flagged as Irrelevant</strong><p style="margin:0.25rem 0 0 0;font-size:0.9rem;">' + (result.relevance_reason || "Your submission did not match the assignment requirements.") + '</p></div></div>';
+                document.getElementById("detailStats").insertAdjacentHTML("afterend", alertHtml);
+            } else if (result.is_relevant === true) {
+                var alertHtml = '<div id="detailRelevance" class="alert alert-success mb-3" style="border-left: 4px solid #27ae60; background: rgba(39,174,96,0.08);"><span style="font-size:1.3rem;">✅</span><div><strong>Submission Relevant</strong><p style="margin:0.25rem 0 0 0;font-size:0.9rem;">' + (result.relevance_reason || "Your submission addresses the assignment topic.") + '</p></div></div>';
+                document.getElementById("detailStats").insertAdjacentHTML("afterend", alertHtml);
+            }
+
             // Student Comments
             if (result.student_comments) {
                 document.getElementById("studentCommentsText").textContent = result.student_comments;

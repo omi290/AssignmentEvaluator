@@ -24,6 +24,13 @@ def _row_to_submission(r):
         "assignment_title": r.get("assignment_title") or "",
         "submitted_at": (r.get("submitted_at") or "").__str__() if r.get("submitted_at") else "",
         "status": r.get("status") or "submitted",
+        "is_relevant": r.get("is_relevant"),
+        "relevance_reason": r.get("relevance_reason") or "",
+        "ai_probability": r.get("ai_probability"),
+        "marks": r.get("marks"),
+        "feedback": r.get("feedback") or "",
+        "plagiarism_flag": r.get("plagiarism_flag"),
+        "plagiarism_score": r.get("plagiarism_score"),
     }
 
 
@@ -221,6 +228,8 @@ def get_teacher_dashboard(teacher_id):
             """
             SELECT s.submission_id, s.student_id, s.assignment_id, s.submitted_at,
                    st.name AS student_name, a.title AS assignment_title,
+                   s.marks, s.feedback, s.ai_probability, s.is_relevant, s.relevance_reason,
+                   s.plagiarism_flag, s.plagiarism_score,
                    CASE WHEN s.marks IS NULL THEN 'submitted' ELSE 'evaluated' END AS status
             FROM submissions s
             JOIN assignments a ON a.assignment_id = s.assignment_id
@@ -399,6 +408,8 @@ def get_teacher_submissions(teacher_id):
             """
             SELECT s.submission_id, s.student_id, s.assignment_id, s.submitted_at,
                    st.name AS student_name, a.title AS assignment_title,
+                   s.marks, s.feedback, s.ai_probability, s.is_relevant, s.relevance_reason,
+                   s.plagiarism_flag, s.plagiarism_score,
                    CASE WHEN s.marks IS NULL THEN 'submitted' ELSE 'evaluated' END AS status
             FROM submissions s
             JOIN assignments a ON a.assignment_id = s.assignment_id
@@ -440,6 +451,8 @@ def get_submission_by_id(submission_id):
             SELECT s.submission_id, s.student_id, s.assignment_id, s.submitted_at,
                    st.name AS student_name, a.title AS assignment_title,
                    a.deadline::text AS assignment_deadline, a.max_marks, s.file_url,
+                   s.marks, s.feedback, s.ai_probability, s.is_relevant, s.relevance_reason,
+                   s.plagiarism_flag, s.plagiarism_score, s.plagiarism_matches,
                    CASE WHEN s.marks IS NULL THEN 'submitted' ELSE 'evaluated' END AS status
             FROM submissions s
             JOIN assignments a ON a.assignment_id = s.assignment_id
@@ -469,6 +482,14 @@ def get_submission_by_id(submission_id):
             "submitted_at": (r.get("submitted_at") or "").__str__(),
             "deadline": (r.get("assignment_deadline") or "").__str__(),
             "file_url": r.get("file_url") or "",
+            "marks": r.get("marks"),
+            "feedback": r.get("feedback") or "",
+            "ai_probability": r.get("ai_probability"),
+            "is_relevant": r.get("is_relevant"),
+            "relevance_reason": r.get("relevance_reason") or "",
+            "plagiarism_flag": r.get("plagiarism_flag"),
+            "plagiarism_score": r.get("plagiarism_score"),
+            "plagiarism_matches": r.get("plagiarism_matches") or "[]",
         },
     }), 200
 
